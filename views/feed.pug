@@ -21,10 +21,13 @@ block content
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-4by3 is-marginless">
-                                if noticia.urlToImage
-                                    img(src=noticia.urlToImage, alt="Placeholder image")
-                                else
-                                    img(src="https://images.pexels.com/photos/261949/pexels-photo-261949.jpeg", alt="Placeholder image")
+                                case noticia.urlToImage.split('.').pop()
+                                    when "jpg"
+                                    when "jpeg"
+                                    when "png"
+                                        img(src=noticia.urlToImage, alt="Placeholder image")
+                                    default
+                                        img(src="https://images.pexels.com/photos/261949/pexels-photo-261949.jpeg", alt="Placeholder image")
                             </figure>
                         </div>
                         <div class="card-content">
