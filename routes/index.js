@@ -12,9 +12,11 @@ router.get('/feed', async function(req, res, next) {
       country: "us",
       apiKey: process.env.NEWS_API_KEY
     }
-  }).catch(e => res.status(500).send("error"));
+  }).catch(e => console.log(e));  
 
-  res.render('feed', { title: 'NewsReader | Feed' });
+  const news_array = news.data.articles;
+
+  res.render('feed', { title: 'NewsReader | Feed', news_array: news_array});
 });
 
 module.exports = router;
