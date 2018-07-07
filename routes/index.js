@@ -14,7 +14,7 @@ router.get('/feed', async function(req, res, next) {
     }
   }).catch(e => res.status(500).send("error"));
 
-  res.render('feed', { title: 'NewsReader | Feed' });
+  res.render('feed', { title: 'NewsReader | Feed', noticias: news.data.articles });
 });
 
 module.exports = router;
