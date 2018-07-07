@@ -16,7 +16,7 @@ block content
 
     main.content
         .columns.is-multiline
-            each item in newsFeed
+            each item in noticias
                 .column.is-4-tablet.is-3-desktop
                     <div class="card">
                         <div class="card-image">
@@ -28,13 +28,19 @@ block content
                             <div class="media">
                                 <div class="media-content">
                                     <p class="title is-4">#{item.title}</p>
-                                    <p class="subtitle is-6">@#{item.source.name}</p>
+                                    if item.author
+                                        <p class="subtitle is-6">@#{item.author}</p>
+                                    <p class="subtitle is-6">+#{item.source.name}</p>
                                 </div>
                             </div>
 
                             <div class="content">
-                                <p>#{item.description}</p>
-                                <time datetime="2016-1-1">#{item.publishedAt}</time>
+                                p= item.description
+                                if item.labels
+                                    each label in item.labels
+                                        a(href=label.url)= label.text
+                                <br>
+                                time(datetime="2016-1-1")= item.publishedAt
                             </div>
                         </div>
                         footer.card-footer
