@@ -41,7 +41,9 @@ block content
 
                             <div class="content">
                                 p= noticia.description
-                                <a href="#">#css</a> <a href="#">#responsive</a>
+                                if noticia.labels
+                                    each label in noticia.labels
+                                        a(href=label.url)= label.text
                                 <br>
                                 time(datetime="2016-1-1")= noticia.publishedAt
                             </div>
