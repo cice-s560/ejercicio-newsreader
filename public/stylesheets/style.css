@@ -1,8 +1,35 @@
-#logo-landing {
+body {
+    background-color: #cacaca;
+    min-height: 100vh;
+}
+
+.logo-brand {
     display: inline-block;
-    margin-right: 2rem;
+    margin-right: 0.5rem !important;
+    margin-left: 0.5rem !important;
+}
+.logo-brand + h1 {
+    display: inline-block;
+    font-size: 1.4rem;
 }
 
 #landing-action {
     margin-top: 2rem;
+}
+
+.custom-brand a {
+    color: #333;
+}
+
+#main-footer {
+    background-color: #fff;
+    padding: 1rem;
+}
+
+main {
+    margin-top: 1rem;
+}
+
+footer.card-footer {
+    justify-content: flex-end;
 }
