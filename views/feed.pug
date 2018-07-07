@@ -16,36 +16,31 @@ block content
 
     main.content
         .columns.is-multiline
-            each noticia in noticias
+            each item in noticias
                 .column.is-4-tablet.is-3-desktop
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-4by3 is-marginless">
-                                case noticia.urlToImage.split('.').pop()
-                                    when "jpg"
-                                    when "jpeg"
-                                    when "png"
-                                        img(src=noticia.urlToImage, alt="Placeholder image")
-                                    default
-                                        img(src="https://images.pexels.com/photos/261949/pexels-photo-261949.jpeg", alt="Placeholder image")
+                            <img src="#{item.urlToImage}" alt="Placeholder image">
                             </figure>
                         </div>
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content">
-                                    p.title.is-4= noticia.title
-                                    if noticia.author
-                                        p.subtitle.is-6= "@" + noticia.author
+                                    <p class="title is-4">#{item.title}</p>
+                                    if item.author
+                                        <p class="subtitle is-6">@#{item.author}</p>
+                                    <p class="subtitle is-6">+#{item.source.name}</p>
                                 </div>
                             </div>
 
                             <div class="content">
-                                p= noticia.description
-                                if noticia.labels
-                                    each label in noticia.labels
+                                p= item.description
+                                if item.labels
+                                    each label in item.labels
                                         a(href=label.url)= label.text
                                 <br>
-                                time(datetime="2016-1-1")= noticia.publishedAt
+                                time(datetime="2016-1-1")= item.publishedAt
                             </div>
                         </div>
                         footer.card-footer
