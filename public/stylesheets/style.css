@@ -1,8 +1,8 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+#logo-landing {
+    display: inline-block;
+    margin-right: 2rem;
 }
 
-a {
-  color: #00B7FF;
+#landing-action {
+    margin-top: 2rem;
 }

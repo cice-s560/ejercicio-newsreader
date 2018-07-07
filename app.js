@@ -16,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Todas las rutas de la app en un solo router
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
