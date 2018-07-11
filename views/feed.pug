@@ -1,59 +1,41 @@
-extends layout
+extends layout_nav
 
-block content
-    header
-        <nav class="navbar" role="navigation" aria-label="main navigation">
-            <div class="navbar-brand content custom-brand">
-                a(href="/")
-                    figure.image.is-32x32.logo-brand
-                        img(src="/images/logo.png")
-                    h1 NewsReader
-            </div>
-        </nav>
-
-
-
+block main
 
     main.content
         .columns.is-multiline
             each item in noticias
                 .column.is-4-tablet.is-3-desktop
-                    <div class="card">
-                        <div class="card-image">
-                            <figure class="image is-4by3 is-marginless">
-                            <img src="#{item.urlToImage}" alt="Placeholder image">
-                            </figure>
-                        </div>
-                        <div class="card-content">
-                            <div class="media">
-                                <div class="media-content">
-                                    <p class="title is-4">#{item.title}</p>
+                    form(method="post", action="/detail").card
+                        input(name="title", value=item.title hidden)
+                        input(name="description", value=item.description hidden)
+                        input(name="author", value=item.author hidden)
+                        input(name="publishedAt", value=item.publishedAt hidden)
+                        input(name="sourceName", value=item.source.name hidden)
+                        input(name="urlToImage", value=item.urlToImage hidden)
+                        input(name="url", value=item.url hidden)
+                        div.card-image
+                            button(type="submit").link-to-detail
+                            figure.image.is-4by3.is-marginless
+                                img(src=item.urlToImage, alt="Placeholder image")
+                                
+                        div.card-content
+                            div.media
+                                div.media-content
+                                    p.title.is-4 #{item.title}
                                     if item.author
-                                        <p class="subtitle is-6">@#{item.author}</p>
-                                    <p class="subtitle is-6">+#{item.source.name}</p>
-                                </div>
-                            </div>
+                                        p.subtitle.is-6 @#{item.author}
+                                    p.subtitle.is-6 +#{item.source.name}
 
-                            <div class="content">
-                                p= item.description
+                            div.content
+                                p #{item.description}
                                 if item.labels
                                     each label in item.labels
-                                        a(href=label.url)= label.text
+                                        a(href=label.url) #{label.text}
                                 <br>
-                                time(datetime="2016-1-1")= item.publishedAt
-                            </div>
-                        </div>
+                                time(datetime="2016-1-1") #{item.publishedAt}
+                                
                         footer.card-footer
                             span.icon.is-medium.has-text-danger
                                 i.fas.fa-heart.fa-lg
-                    </div>
 
-    
-    
-    
-    
-    
-    
-    footer#main-footer.content.has-text-centered
-        p
-            a(href="https://newsapi.org/") Fuente de noticias NewsApi
