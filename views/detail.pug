@@ -1,0 +1,16 @@
+extends layout_nav
+
+block main
+    div.has-background-white.detail
+        div.container
+            div.columns
+                div.column.is-4-desktop
+                    figure.image.is-4by3.is-marginless
+                        img(src=noticia.urlToImage, alt="Placeholder image")
+                div.column.is-8-desktop
+                    h1 #{noticia.title}
+                    p @#{noticia.sourceName}
+                    time(datetime=noticia.publishedAt).has-text-grey-light #{noticia.publishedAt}
+                    p #{noticia.description}
+                    <br>
+                    a.button.is-inverted.is-outlined(href=noticia.url, target="_blank") Seguir leyendo

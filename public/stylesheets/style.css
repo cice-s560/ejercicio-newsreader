@@ -46,3 +46,8 @@ footer.card-footer {
     border: none;
     cursor: pointer;
 }
+.detail{
+    padding: 50px 5px;
+    margin-top: -15px;
+    margin-bottom: -23px;
+}
