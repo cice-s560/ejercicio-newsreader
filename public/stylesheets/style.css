@@ -33,3 +33,16 @@ main {
 footer.card-footer {
     justify-content: flex-end;
 }
+
+.link-to-detail{
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
