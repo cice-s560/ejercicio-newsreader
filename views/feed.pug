@@ -6,11 +6,17 @@ block main
         .columns.is-multiline
             each item in noticias
                 .column.is-4-tablet.is-3-desktop
-                    div.card
+                    form(method="post", action="/detail").card
+                        input(name="title", value=item.title hidden)
+                        input(name="description", value=item.description hidden)
+                        input(name="author", value=item.author hidden)
+                        input(name="publishedAt", value=item.publishedAt hidden)
+                        input(name="sourceName", value=item.source.name hidden)
                         div.card-image
+                            button(type="submit").link-to-detail
                             figure.image.is-4by3.is-marginless
                                 img(src=item.urlToImage, alt="Placeholder image")
-
+                                
                         div.card-content
                             div.media
                                 div.media-content
