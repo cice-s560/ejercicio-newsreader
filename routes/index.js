@@ -14,9 +14,7 @@ router.get('/feed', async function(req, res, next) {
     }
   }).catch(e => console.log(e));  
 
-  const news_array = news.data.articles;
-
-  res.render('feed', { title: 'NewsReader | Feed', news_array: news_array});
+  res.render('feed', { title: 'NewsReader | Feed', noticias: news.data.articles });
 });
 
 module.exports = router;
