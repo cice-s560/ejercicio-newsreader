@@ -14,6 +14,15 @@ router.get('/feed', async function(req, res, next) {
     }
   }).catch(e => console.log(e));  
 
+  if (req.query.id) {
+    const article = news.data.articles.find(article => {
+      if (article.url === req.query.id) {
+        return article;
+      }
+    });
+    res.render('single', { title: 'NewsReader | Article', noticia: article });
+    return;
+  }
   res.render('feed', { title: 'NewsReader | Feed', noticias: news.data.articles });
 });
 

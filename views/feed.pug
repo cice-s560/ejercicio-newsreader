@@ -41,11 +41,16 @@ block content
                                         a(href=label.url)= label.text
                                 <br>
                                 time(datetime="2016-1-1")= item.publishedAt
+                                a(href="/feed?id="+item.url).button.is-info.read-more='Leer más'
                             </div>
                         </div>
                         footer.card-footer
                             span.icon.is-medium.has-text-danger
                                 i.fas.fa-heart.fa-lg
+                            span.icon.is-medium
+                                i.fas.fa-bookmark
+                            span.icon.is-medium
+                                i.fas.fa-share-alt
                     </div>
 
     
