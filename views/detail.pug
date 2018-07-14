@@ -1,8 +1,7 @@
 extends layout
 
 block content
-
-    article.content(data-idnoticia=article.id)
+    article.content(data-idnoticia=article.id, data-rate=article.rating) 
         header
             .columns.is-multiline
                 .column.is-12
@@ -16,7 +15,15 @@ block content
                                 span @#{article.author} | 
                             span +#{article.source.name}
                 .column.is-6
-                   fielset.rating.is-pulled-right
+                    if article.fav
+                        div.is-pulled-right.fav.has-text-danger
+                            span.icon.is-large
+                                i.fas.fa-heart.fa-lg
+                    else
+                        div.is-pulled-right.fav
+                            span.icon.is-large
+                                i.fas.fa-heart.fa-lg
+                    fielset.rating.is-pulled-right
                         <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
                         <input type="radio" id="star4half" name="rating" value="4.5" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
                         <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
