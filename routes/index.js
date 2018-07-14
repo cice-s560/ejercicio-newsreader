@@ -61,4 +61,26 @@ router.get("/detail/:id", async function(req, res) {
   res.render("detail", { title: "NewsReader | Detail", article });
 });
 
+router.post("/update-rating", async function(req, res) {
+  
+  db.articles.forEach(article =>{
+    if(article.id === req.body.id)
+      article.rating = req.body.rating;
+  });
+  fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
+
+});
+
+function formatDate(format, date){
+
+    date = new Date(date);
+    
+    format = format.split("Y").join(date.getFullYear());
+    format = format.split("m").join(("0" + (date.getMonth()+1)).slice(-2));
+    format = format.split("d").join(("0" + date.getDate()).slice(-2));
+
+    return format;
+
+}
+
 module.exports = router;
