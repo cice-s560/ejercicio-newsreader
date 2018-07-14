@@ -61,6 +61,16 @@ router.get("/detail/:id", async function(req, res) {
   res.render("detail", { title: "NewsReader | Detail", article });
 });
 
+router.post("/update-rating", async function(req, res) {
+  
+  db.articles.forEach(article =>{
+    if(article.id === req.body.id)
+      article.rating = req.body.rating;
+  });
+  fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
+
+});
+
 function formatDate(format, date){
 
     date = new Date(date);
