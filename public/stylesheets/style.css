@@ -1,99 +1,101 @@
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
 body {
-    background-color: #cacaca;
-    min-height: 100vh;
+  background-color: #cacaca;
+  min-height: 100vh;
 }
 
 .logo-brand {
-    display: inline-block;
-    margin-right: 0.5rem !important;
-    margin-left: 0.5rem !important;
+  display: inline-block;
+  margin-right: 0.5rem !important;
+  margin-left: 0.5rem !important;
 }
 .logo-brand + h1 {
-    display: inline-block;
-    font-size: 1.4rem;
+  display: inline-block;
+  font-size: 1.4rem;
 }
 
 #landing-action {
-    margin-top: 2rem;
+  margin-top: 2rem;
 }
 
 .custom-brand a {
-    color: #333;
+  color: #333;
 }
 
 #main-footer {
-    background-color: #fff;
-    padding: 1rem;
+  background-color: #fff;
+  padding: 1rem;
 }
 
 main {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 footer.card-footer {
-    justify-content: center;
-    border-top: none;
+  justify-content: flex-end;
 }
 
-.card_single {
-    background-color: #fff;
-    box-shadow: 0 2px 3px rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.1);
-    color: #4a4a4a;
-    max-width: 100%;
-    position: relative;
-    width: 1000px;
-    margin: 0 auto;
-    padding-top: 30px;
+.content figure {
+  margin: 0;
 }
 
-.image-article {
-    width: 930px;
-    height: auto;
+img.detail-image {
+  width: 100%;
 }
 
-.rating-group {
-    display: inline-flex;
+.detail-title,
+.detail-content {
+  box-sizing: border-box;
+  padding: 0 1rem;
 }
 
-.rating__icon {
-    pointer-events: none;
+.detail-content {
+  margin-top: 2rem;
 }
 
-.rating-input {
-    position: absolute !important;
-    left: -9999px !important;
+.footer-detail {
+  margin-top: 2rem;
+  padding: 1rem;
 }
 
-.rating-input-none {
-    display: none
+.rating {
+  border: none;
+  float: left;
 }
 
-.rating-label {
-    cursor: pointer;
-    padding: 0 0.1em;
-    font-size: 1.4rem;
+.rating > input {
+  display: none;
+}
+.rating > label:before {
+  margin: 5px;
+  font-size: 1.25em;
+  font-family: FontAwesome;
+  display: inline-block;
+  content: "\f005";
 }
 
-.rating-icon-star {
-    color: orange;
+.rating > .half:before {
+  content: "\f089";
+  position: absolute;
 }
 
-.rating-input:checked ~ .rating-label .rating-icon-star {
-    color: #ddd;
+.rating > label {
+  color: #ddd;
+  float: right;
 }
 
-.rating-group:hover .rating-label .rating-icon-star {
-    color: orange;
-}
+/***** CSS Magic to Highlight Stars on Hover *****/
 
-.rating-input:hover ~ .rating-label .rating-icon-star {
-    color: #ddd;
-}
+.rating > input:checked ~ label, /* show gold star when clicked */
+  .rating:not(:checked) > label:hover, /* hover current star */
+  .rating:not(:checked) > label:hover ~ label {
+  color: #ffd700;
+} /* hover previous stars in list */
 
-.card-content {
-    padding: 1.5rem 3rem;
-}
-
-.read-more {
-    margin: 5% 35%;
+.rating > input:checked + label:hover, /* hover current star when changing rating */
+  .rating > input:checked ~ label:hover,
+  .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+  .rating > input:checked ~ label:hover ~ label {
+  color: #ffed85;
 }
