@@ -1,16 +1,38 @@
-extends layout_nav
+extends layout
 
-block main
-    div.has-background-white.detail
-        div.container
-            div.columns
-                div.column.is-4-desktop
-                    figure.image.is-4by3.is-marginless
-                        img(src=noticia.urlToImage, alt="Placeholder image")
-                div.column.is-8-desktop
-                    h1 #{noticia.title}
-                    p @#{noticia.sourceName}
-                    time(datetime=noticia.publishedAt).has-text-grey-light #{noticia.publishedAt}
-                    p #{noticia.description}
-                    <br>
-                    a.button.is-inverted.is-outlined(href=noticia.url, target="_blank") Seguir leyendo
+block content
+
+    article.content
+        header
+            .columns.is-multiline
+                .column.is-12
+                    figure
+                        img(src!=article.urlToImage alt!="image-" + article.source.name class="detail-image")
+                .column.is-6
+                    .detail-title
+                        h2!= article.title
+                        h3.is-marginless.is-size-5.has-text-grey 
+                            if article.author
+                                span @#{article.author} | 
+                            span +#{article.source.name}
+                .column.is-6
+                   fielset.rating.is-pulled-right
+                        <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                        <input type="radio" id="star4half" name="rating" value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+                        <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                        <input type="radio" id="star3half" name="rating" value="3 and a half" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+                        <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                        <input type="radio" id="star2half" name="rating" value="2 and a half" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+                        <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                        <input type="radio" id="star1half" name="rating" value="1 and a half" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+                        <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                        <input type="radio" id="starhalf" name="rating" value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+        .detail-content.is-size-5
+            p #{article.description}
+
+        footer.footer-detail
+            a.is-link.button(href!=article.url) Ver noticia
+        
+            
+        
+        

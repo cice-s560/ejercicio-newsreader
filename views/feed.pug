@@ -1,41 +1,39 @@
-extends layout_nav
+extends layout
 
-block main
-
+block content
+   
     main.content
         .columns.is-multiline
             each item in noticias
                 .column.is-4-tablet.is-3-desktop
-                    form(method="post", action="/detail").card
-                        input(name="title", value=item.title hidden)
-                        input(name="description", value=item.description hidden)
-                        input(name="author", value=item.author hidden)
-                        input(name="publishedAt", value=item.publishedAt hidden)
-                        input(name="sourceName", value=item.source.name hidden)
-                        input(name="urlToImage", value=item.urlToImage hidden)
-                        input(name="url", value=item.url hidden)
-                        div.card-image
-                            button(type="submit").link-to-detail
-                            figure.image.is-4by3.is-marginless
-                                img(src=item.urlToImage, alt="Placeholder image")
-                                
-                        div.card-content
-                            div.media
-                                div.media-content
-                                    p.title.is-4 #{item.title}
-                                    if item.author
-                                        p.subtitle.is-6 @#{item.author}
-                                    p.subtitle.is-6 +#{item.source.name}
 
-                            div.content
-                                p #{item.description}
-                                if item.labels
-                                    each label in item.labels
-                                        a(href=label.url) #{label.text}
-                                <br>
-                                time(datetime="2016-1-1") #{item.publishedAt}
-                                
-                        footer.card-footer
-                            span.icon.is-medium.has-text-danger
-                                i.fas.fa-heart.fa-lg
+                    a(href!="http://localhost:3000/detail/" + item.id)
+                        <div class="card">
+                            <div class="card-image">
+                                <figure class="image is-4by3 is-marginless">
+                                <img src="#{item.urlToImage}" alt="Placeholder image">
+                                </figure>
+                            </div>
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                        <p class="title is-4">#{item.title}</p>
+                                        if item.author
+                                            <p class="subtitle is-6">@#{item.author}</p>
+                                        <p class="subtitle is-6">+#{item.source.name}</p>
+                                    </div>
+                                </div>
 
+                                <div class="content">
+                                    p= item.description
+                                    if item.labels
+                                        each label in item.labels
+                                            a(href=label.url)= label.text
+                                    <br>
+                                    time(datetime="2016-1-1")= item.publishedAt
+                                </div>
+                            </div>
+                            footer.card-footer
+                                span.icon.is-medium.has-text-danger
+                                    i.fas.fa-heart.fa-lg
+                        </div>
