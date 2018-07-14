@@ -25,7 +25,7 @@ router.get('/details/:index', async function(req, res, next) {
     }
   }).catch(e => res.status(500).send("error"));
   const noticia = news.data.articles[index];
-  res.render('details', { title: 'NewsReader | Details', noticia:noticia});
+  res.render('details', { title: 'NewsReader | Details', noticia: noticia, index: index});
 });
 
 module.exports = router;
