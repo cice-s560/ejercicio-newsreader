@@ -27,8 +27,11 @@ block content
                                         each label in item.labels
                                             a(href=label.url)= label.text
                                     <br>
-                                    time(datetime="2016-1-1")= item.publishedAt
+                                    span= item.publishedAt
                                 
                             footer.card-footer
                                 span.icon.is-medium.card-footer-item
-                                    i.fas.fa-heart.fa-lg.has-text-danger
+                                    if item.fav
+                                        i.fas.fa-heart.fa-lg.has-text-danger
+                                    else
+                                        i.fas.fa-heart.fa-lg

@@ -40,7 +40,7 @@ block content
 
         footer.footer-detail
             a.is-link.button(href!=article.url) Ver noticia
-            a.button(href!="/feed") Volver al feed
+            button.button(type="button", onclick="window.history.back()") Volver al feed
 
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
     script(src="/js/detail.js")
