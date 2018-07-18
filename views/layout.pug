@@ -8,14 +8,16 @@ html
     link(rel="icon", type="image/png", href="/favicon.png")
   body
     header
-        <nav class="navbar" role="navigation" aria-label="main navigation">
-            <div class="navbar-brand content custom-brand">
+        nav.navbar(role="navigation", aria-label="main navigation")
+            div.navbar-brand.content.custom-brand
                 a(href="/")
-                    figure.image.is-32x32.logo-brand
+                    figure.image.is-32x32.logo-brand.is-marginless
                         img(src="/images/logo.png")
-                    h1 NewsReader
-            </div>
-        </nav>
+                    h1.is-marginless NewsReader
+                div.navbar-categorias
+                    a(href="#").button Deportes
+                    a(href="#").button Tecnología
+                    a(href="#").button Salud
 
     block content
 
