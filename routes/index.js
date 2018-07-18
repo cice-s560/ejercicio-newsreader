@@ -66,17 +66,19 @@ router.patch("/update-rating/:id", async function(req, res) {
   db.articles.forEach(article => {
     if (article.id === req.params.id) article.rating = req.body.rating;
   });
+  res.status(200).send();
   fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
-
-  return res.status(200).send();
+  
 });
 
-router.patch("/update-fav/:id", async function(req, res) {
-  const article = db.articles.find(item => item.id === req.params.id);
-  article.fav = !Boolean(article.fav);
-  fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
+router.patch("/update-favorito/:id", async function(req, res) {
+  
+    console.log("Requested update favoritos");
+    const article = db.articles.find(item => item.id === req.params.id)
+    article.fav = !Boolean(article.fav);
+    res.status(200).send();
+    fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
 
-  return res.status(200).send();
 });
 
 function formatDate(format, date) {
