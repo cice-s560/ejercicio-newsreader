@@ -59,6 +59,13 @@ img.detail-image {
   padding: 1rem;
 }
 
+.fav {
+  margin: 0 2rem 0 4rem;
+  font-size: 2.2rem;
+  cursor: pointer;
+}
+
+/*Código misterio....*/
 .rating {
   border: none;
   float: left;

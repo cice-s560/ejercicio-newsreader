@@ -1,0 +1,18 @@
+extends layout
+
+block content
+
+    header
+        nav(class="navbar", role="navigation", aria-label="main navigation")
+            div.navbar-brand.content.custom-brand
+                a(href="/")
+                    figure.image.is-32x32.logo-brand
+                        img(src="/images/logo.png")
+                    h1 NewsReader
+
+    main.content       
+        block main
+
+    footer#main-footer.content.has-text-centered
+        p
+            a(href="https://newsapi.org/") Fuente de noticias NewsApi  

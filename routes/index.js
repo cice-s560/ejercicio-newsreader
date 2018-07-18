@@ -34,7 +34,8 @@ router.get("/feed", async function(req, res) {
   const totalArticles = news.data.articles.map(article => ({
     ...article,
     id: uuid(article.url, uuid.URL),
-    rating: 0
+    rating: 0,
+    fav: false
   }));
 
   const articlesFiltered = totalArticles.filter(item => {
@@ -60,5 +61,32 @@ router.get("/detail/:id", async function(req, res) {
 
   res.render("detail", { title: "NewsReader | Detail", article });
 });
+
+router.patch("/update-rating/:id", async function(req, res) {
+  db.articles.forEach(article => {
+    if (article.id === req.params.id) article.rating = req.body.rating;
+  });
+  fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
+
+  return res.status(200).send();
+});
+
+router.patch("/update-fav/:id", async function(req, res) {
+  const article = db.articles.find(item => item.id === req.params.id);
+  article.fav = !Boolean(article.fav);
+  fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
+
+  return res.status(200).send();
+});
+
+function formatDate(format, date) {
+  date = new Date(date);
+
+  format = format.split("Y").join(date.getFullYear());
+  format = format.split("m").join(("0" + (date.getMonth() + 1)).slice(-2));
+  format = format.split("d").join(("0" + date.getDate()).slice(-2));
+
+  return format;
+}
 
 module.exports = router;
