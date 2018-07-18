@@ -1,0 +1,56 @@
+extends layout
+
+block content
+  main.content
+    <div class="card_single">
+      <div class="card-image">
+        <figure class="image-article">
+          <img src="#{noticia.urlToImage}" alt="Placeholder image">
+        </figure>
+      </div>
+      <div class="card-content">
+        <div class="media">
+          <div class="media-content">
+          <div class="columns">
+            <div class="column is-four-fifths">
+              <p class="title is-4">#{noticia.title}</p>
+            </div>
+            <div class="column">
+              <div class="rating-group">
+                  <input disabled checked class="rating-input rating-input-none" name="rating3" id="rating3-none" value="0" type="radio">
+                  <label aria-label="1 star" class="rating-label" for="rating3-1"><i class="rating-icon rating-icon-star fa fa-star"></i></label>
+                  <input class="rating-input" name="rating3" id="rating3-1" value="1" type="radio">
+                  <label aria-label="2 stars" class="rating-label" for="rating3-2"><i class="rating-icon rating-icon-star fa fa-star"></i></label>
+                  <input class="rating-input" name="rating3" id="rating3-2" value="2" type="radio">
+                  <label aria-label="3 stars" class="rating-label" for="rating3-3"><i class="rating-icon rating-icon-star fa fa-star"></i></label>
+                  <input class="rating-input" name="rating3" id="rating3-3" value="3" type="radio">
+                  <label aria-label="4 stars" class="rating-label" for="rating3-4"><i class="rating-icon rating-icon-star fa fa-star"></i></label>
+                  <input class="rating-input" name="rating3" id="rating3-4" value="4" type="radio">
+                  <label aria-label="5 stars" class="rating-label" for="rating3-5"><i class="ratingicon rating-icon-star fa fa-star"></i></label>
+                  <input class="rating-input" name="rating3" id="rating3-5" value="5" type="radio">
+              </div>
+            </div>
+          </div>
+            
+            if noticia.author
+              <p class="subtitle is-6">@#{noticia.author}</p>
+              <p class="subtitle is-6">+#{noticia.source.name}</p>
+          </div>
+        </div>
+      <div class="content">
+        p= noticia.description
+        if noticia.labels
+          each label in noticia.labels
+            a(href=noticia.url)= noticia.text
+              <br>
+                time(datetime="2016-1-1")= noticia.publishedAt
+              </br>
+
+      </div>
+    </div>
+    footer.card-footer
+      <a href="/feed" class="button is-info">Atrás</a>
+
+    footer#main-footer.content.has-text-centered
+        p
+            a(href="https://newsapi.org/") Fuente de noticias NewsApi
