@@ -45,7 +45,7 @@ router.get("/", function(req, res, next) {
 
 router.get("/feed", async function(req, res) {
   const news = await axios
-    .get("https://newsapi.org/v2/top-headlines?category=general", {
+    .get("https://newsapi.org/v2/top-headlines", {
       params: {
         country: "us",
         apiKey: process.env.NEWS_API_KEY
@@ -69,6 +69,15 @@ router.get("/feed", async function(req, res) {
       // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
       return !Boolean(check);
     });
+
+    db.general.forEach(article => {
+      totalArticles.forEach(total_article => {
+        if (total_article.id === article.id) {                    
+          total_article.fav = article.fav;
+        }
+      })
+    })
+
   } else {
     articlesFiltered = totalArticles;
   };  
@@ -275,8 +284,6 @@ router.get("/feed/favourites", async function(req, res) {
     }
     res.render("error", {title: "NewsReader | Not Result",error });
   }
-
-  
   
 });
 
