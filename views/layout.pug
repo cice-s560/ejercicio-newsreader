@@ -8,24 +8,62 @@ html
     link(rel="icon", type="image/png", href="/favicon.png")
   body
     header
-        <nav class="navbar" role="navigation" aria-label="main navigation">
-            <div class="navbar-brand content custom-brand">
-                a(href="/")
-                    figure.image.is-32x32.logo-brand
-                        img(src="/images/logo.png")
-                    h1 NewsReader
+    <nav class="navbar is-transparent">
+        <div class="navbar-brand custom-brand">
+            a(href="/")
+                figure.image.is-32x32.logo-brand
+                    img(src="/images/logo.png")
+                h1 NewsReader
+        </div>
+
+        <div id="navbarExampleTransparentExample" class="navbar-menu">
+            <div class="navbar-start">
+            <a class="navbar-item" href="feed/general">
+                h1 General            
+            </a>
+            <a class="navbar-item" href="/feed/business">
+                h1 Business            
+            </a>  
+            <a class="navbar-item" href="/feed/entertainment">
+                h1 Entertainment            
+            </a>  
+            <a class="navbar-item" href="/feed/sports">
+                h1 Sports            
+            </a>
+            <a class="navbar-item" href="/feed/favourites">
+                h1 My Favourites            
+            </a>
+            <hr class="navbar-divider">
+        </div>
             </div>
-            <div class="navbar-brand content menu">
-                a(href="/feed/general").menu_element
-                    h1 General
-                a(href="/feed/entertainment").menu_element
-                    h1 Entertainment
-                a(href="/feed/business").menu_element
-                    h1 Business
-                a(href="/feed/sports").menu_element
-                    h1 Sports
             </div>
-        </nav>
+
+            <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="field is-grouped">
+                <p class="control">
+                    <a class="bd-tw-button button" data-social-network="Twitter" data-social-action="tweet" data-social-target="http://localhost:4000" target="_blank" href="https://twitter.com/intent/tweet?text=Bulma: a modern CSS framework based on Flexbox&amp;hashtags=bulmaio&amp;url=http://localhost:4000&amp;via=jgthms">
+                    <span class="icon">
+                        <i class="fab fa-twitter"></i>
+                    </span>
+                    <span>
+                        Tweet
+                    </span>
+                    </a>
+                </p>
+                <p class="control">
+                    <a class="button is-primary" href="https://github.com/jgthms/bulma/releases/download/0.7.1/bulma-0.7.1.zip">
+                    <span class="icon">
+                        <i class="fas fa-download"></i>
+                    </span>
+                    <span>Download</span>
+                    </a>
+                </p>
+                </div>
+            </div>
+            </div>
+        </div>
+    </nav>
 
     block content
 

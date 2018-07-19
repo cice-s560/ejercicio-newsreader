@@ -14,22 +14,22 @@ function saveOnDB(data,section) {
   let dataToWrite;
   switch (section) {
     case 'general':
-    oldNews = db.general;
+    (db.general) ? oldNews = db.general: oldNews = [];
     db.general = [...oldNews, ...data];
     dataToWrite = db;
     break;
     case 'sports':
-    oldNews = db.sports;
+    (db.sports) ? oldNews = db.sports: oldNews = [];
     db.sports = [...oldNews, ...data];
     dataToWrite = db;
     break;
     case 'entertainment':
-    oldNews = db.entertainment;
+    (db.entertainment) ? oldNews = db.entertainment: oldNews = [];
     db.entertainment = [...oldNews, ...data];
     dataToWrite = db;
     break;
     case 'business':
-    oldNews = db.business;
+    (db.business) ? oldNews = db.business: oldNews = [];
     db.business = [...oldNews, ...data];
     dataToWrite = db;
     break;
@@ -45,7 +45,7 @@ router.get("/", function(req, res, next) {
 
 router.get("/feed", async function(req, res) {
   const news = await axios
-    .get("https://newsapi.org/v2/top-headlines", {
+    .get("https://newsapi.org/v2/top-headlines?category=general", {
       params: {
         country: "us",
         apiKey: process.env.NEWS_API_KEY
@@ -57,22 +57,28 @@ router.get("/feed", async function(req, res) {
     ...article,
     id: uuid(article.url, uuid.URL),
     rating: 0,
-    fav: false
+    fav: (article.fav) ? true : false
   }));
 
-  const articlesFiltered = totalArticles.filter(item => {
-    const check = db.general.find(art => art.url === item.url);
-    // Quiero devolver el contrario de la comprobación
-    // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
-    return !Boolean(check);
-  });
+  let  articlesFiltered;
 
+  if (db.general) {
+    articlesFiltered = totalArticles.filter(item => {
+      const check = db.general.find(art => art.url === item.url);
+      // Quiero devolver el contrario de la comprobación
+      // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
+      return !Boolean(check);
+    });
+  } else {
+    articlesFiltered = totalArticles;
+  };  
+ 
   // Pinto en pantalla todos los que me vienen
   res.render("feed", {
     title: "NewsReader | Feed",
     noticias: totalArticles
   });
-
+  
   // Guardo solo los que no tenía guardados antes
   saveOnDB(articlesFiltered, 'general');
 });
@@ -87,19 +93,24 @@ router.get("/feed/sports", async function(req, res) {
     })
     .catch(e => res.status(500).send("error"));
 
+
   const totalArticles = news.data.articles.map(article => ({
     ...article,
     id: uuid(article.url, uuid.URL),
     rating: 0,
-    fav: false
+    fav: (article.fav) ? true : false
   }));
 
-  const articlesFiltered = totalArticles.filter(item => {
-    const check = db.sports.find(art => art.url === item.url);
-    // Quiero devolver el contrario de la comprobación
-    // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
-    return !Boolean(check);
-  });
+  if (db.sports) {
+    articlesFiltered = totalArticles.filter(item => {
+      const check = db.sports.find(art => art.url === item.url);
+      // Quiero devolver el contrario de la comprobación
+      // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
+      return !Boolean(check);
+    });
+  } else {
+    articlesFiltered = totalArticles;
+  };
 
   // Pinto en pantalla todos los que me vienen
   res.render("feed", {
@@ -125,15 +136,19 @@ router.get("/feed/general", async function(req, res) {
     ...article,
     id: uuid(article.url, uuid.URL),
     rating: 0,
-    fav: false
+    fav: (article.fav) ? true : false
   }));
 
-  const articlesFiltered = totalArticles.filter(item => {
-    const check = db.general.find(art => art.url === item.url);
-    // Quiero devolver el contrario de la comprobación
-    // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
-    return !Boolean(check);
-  });
+  if (db.general) {
+    articlesFiltered = totalArticles.filter(item => {
+      const check = db.general.find(art => art.url === item.url);
+      // Quiero devolver el contrario de la comprobación
+      // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
+      return !Boolean(check);
+    });
+  } else {
+    articlesFiltered = totalArticles;
+  };
 
   // Pinto en pantalla todos los que me vienen
   res.render("feed", {
@@ -142,7 +157,7 @@ router.get("/feed/general", async function(req, res) {
   });
 
   // Guardo solo los que no tenía guardados antes
-  saveOnDB(articlesFiltered);
+  saveOnDB(articlesFiltered, 'general');
 });
 
 router.get("/feed/business", async function(req, res) {
@@ -159,15 +174,19 @@ router.get("/feed/business", async function(req, res) {
     ...article,
     id: uuid(article.url, uuid.URL),
     rating: 0,
-    fav: false
+    fav: (article.fav) ? true : false
   }));
 
-  const articlesFiltered = totalArticles.filter(item => {
-    const check = db.business.find(art => art.url === item.url);
-    // Quiero devolver el contrario de la comprobación
-    // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
-    return !Boolean(check);
-  });
+  if (db.business) {
+    articlesFiltered = totalArticles.filter(item => {
+      const check = db.business.find(art => art.url === item.url);
+      // Quiero devolver el contrario de la comprobación
+      // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
+      return !Boolean(check);
+    });
+  } else {
+    articlesFiltered = totalArticles;
+  };
 
   // Pinto en pantalla todos los que me vienen
   res.render("feed", {
@@ -176,7 +195,7 @@ router.get("/feed/business", async function(req, res) {
   });
 
   // Guardo solo los que no tenía guardados antes
-  saveOnDB(articlesFiltered);
+  saveOnDB(articlesFiltered, 'business');
 });
 
 router.get("/feed/entertainment", async function(req, res) {
@@ -193,15 +212,19 @@ router.get("/feed/entertainment", async function(req, res) {
     ...article,
     id: uuid(article.url, uuid.URL),
     rating: 0,
-    fav: false
+    fav: (article.fav) ? true : false
   }));
 
-  const articlesFiltered = totalArticles.filter(item => {
-    const check = db.entertainment.find(art => art.url === item.url);
-    // Quiero devolver el contrario de la comprobación
-    // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
-    return !Boolean(check);
-  });
+  if (db.entertainment) {
+    articlesFiltered = totalArticles.filter(item => {
+      const check = db.entertainment.find(art => art.url === item.url);
+      // Quiero devolver el contrario de la comprobación
+      // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
+      return !Boolean(check);
+    });
+  } else {
+    articlesFiltered = totalArticles;
+  };
 
   // Pinto en pantalla todos los que me vienen
   res.render("feed", {
@@ -210,18 +233,58 @@ router.get("/feed/entertainment", async function(req, res) {
   });
 
   // Guardo solo los que no tenía guardados antes
-  saveOnDB(articlesFiltered);
+  saveOnDB(articlesFiltered, 'entertainment');
 });
 
 router.get("/detail/:id", async function(req, res) {
   const param = req.params.id;
-  const article = db.articles.find(item => item.id === param);
+  let articles = [];
+  const keys = Object.keys(db);
+  keys.forEach(key => articles.push(...db[key]));  
+  const article = articles.find(item => item.id === param);
+  if (article !== undefined) {
+    res.render("detail", { title: "NewsReader | Detail", article });
+  } else {
+    let error = {
+      message: "Article not found",
+      status: 404
+    }
+    res.render("error", { title: "NewsReader | Error 404", error});
+  }
+  
+});
 
-  res.render("detail", { title: "NewsReader | Detail", article });
+router.get("/feed/favourites", async function(req, res) {
+  const param = req.params.id;
+  let articles = [];
+  const keys = Object.keys(db);
+  keys.forEach(key => articles.push(...db[key]));  
+  let favourites = [];
+  articles.forEach(item => {
+    if (item.fav) {
+      favourites.push(item);
+    }
+  });
+
+  if (favourites.length > 0) {
+    res.render("feed", {title: "NewsReader | Favourites",noticias: favourites});
+  } else {
+    let error = {
+      message: "No favourites articles found",
+      status: 404
+    }
+    res.render("error", {title: "NewsReader | Not Result",error });
+  }
+
+  
+  
 });
 
 router.patch("/update-rating/:id", async function(req, res) {
-  db.articles.forEach(article => {
+  let articles = [];
+  const keys = Object.keys(db);
+  keys.forEach(key => articles.push(...db[key]));    
+  articles.forEach(article => {    
     if (article.id === req.params.id) article.rating = req.body.rating;
   });
   fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
@@ -230,7 +293,10 @@ router.patch("/update-rating/:id", async function(req, res) {
 });
 
 router.patch("/update-fav/:id", async function(req, res) {
-  const article = db.articles.find(item => item.id === req.params.id);
+  let articles = [];
+  const keys = Object.keys(db);
+  keys.forEach(key => articles.push(...db[key]));    
+  const article = articles.find(item => item.id === req.params.id);
   article.fav = !Boolean(article.fav);
   fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
 
