@@ -34,216 +34,225 @@ function saveOnDB(data,section) {
     dataToWrite = db;
     break;
   }
-
   const dataString = JSON.stringify(db);
   fs.writeFileSync(dbPath, dataString, "utf8");
 }
 
-router.get("/", function(req, res, next) {
-  res.render("landing", { title: "NewsReader" });
-});
-
-router.get("/feed", async function(req, res) {
-  const news = await axios
-    .get("https://newsapi.org/v2/top-headlines", {
-      params: {
-        country: "us",
-        apiKey: process.env.NEWS_API_KEY
-      }
-    })
-    .catch(e => res.status(500).send("error"));
-
-  const totalArticles = news.data.articles.map(article => ({
-    ...article,
-    id: uuid(article.url, uuid.URL),
-    rating: 0,
-    fav: (article.fav) ? true : false
-  }));
-
-  let  articlesFiltered;
-
-  if (db.general) {
+function filterArticles(db, totalArticles, category) {
+  if (db[category]) {
     articlesFiltered = totalArticles.filter(item => {
-      const check = db.general.find(art => art.url === item.url);
+      const check = db[category].find(art => art.url === item.url);
       // Quiero devolver el contrario de la comprobación
       // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
       return !Boolean(check);
     });
 
-    db.general.forEach(article => {
+    db[category].forEach(article => {
       totalArticles.forEach(total_article => {
         if (total_article.id === article.id) {                    
           total_article.fav = article.fav;
         }
       })
     })
-
   } else {
     articlesFiltered = totalArticles;
-  };  
+  };
+  return articlesFiltered;
+}
+
+router.get("/", function(req, res, next) {
+  res.render("landing", { title: "NewsReader" });
+});
+
+router.get("/feed", async function(req, res) {  
+  let category = req.query.category;
+  console.log(category);
+  
+  if (category === undefined) {
+    category = "general"
+  }
+  const urlQuery = `?category=${category}`  
+
+  const news = await axios
+    .get(`https://newsapi.org/v2/top-headlines${urlQuery}`, {
+      params: {
+        country: "us",
+        apiKey: process.env.NEWS_API_KEY
+      }
+    })
+    .catch(e => res.status(500).send("error"));
+
+  const totalArticles = news.data.articles.map(article => ({
+    ...article,
+    id: uuid(article.url, uuid.URL),
+    rating: 0,
+    fav: (article.fav) ? true : false
+  }));
+
+  let articlesFiltered = filterArticles(db, totalArticles, category);
  
   // Pinto en pantalla todos los que me vienen
   res.render("feed", {
-    title: "NewsReader | Feed",
+    title: `NewsReader | ${category}`,
     noticias: totalArticles
   });
   
   // Guardo solo los que no tenía guardados antes
-  saveOnDB(articlesFiltered, 'general');
+  saveOnDB(articlesFiltered, category);
 });
 
-router.get("/feed/sports", async function(req, res) {
-  const news = await axios
-    .get("https://newsapi.org/v2/top-headlines?category=sports", {
-      params: {
-        country: "us",
-        apiKey: process.env.NEWS_API_KEY
-      }
-    })
-    .catch(e => res.status(500).send("error"));
+// router.get("/feed/sports", async function(req, res) {
+//   const news = await axios
+//     .get("https://newsapi.org/v2/top-headlines?category=sports", {
+//       params: {
+//         country: "us",
+//         apiKey: process.env.NEWS_API_KEY
+//       }
+//     })
+//     .catch(e => res.status(500).send("error"));
 
 
-  const totalArticles = news.data.articles.map(article => ({
-    ...article,
-    id: uuid(article.url, uuid.URL),
-    rating: 0,
-    fav: (article.fav) ? true : false
-  }));
+//   const totalArticles = news.data.articles.map(article => ({
+//     ...article,
+//     id: uuid(article.url, uuid.URL),
+//     rating: 0,
+//     fav: (article.fav) ? true : false
+//   }));
 
-  if (db.sports) {
-    articlesFiltered = totalArticles.filter(item => {
-      const check = db.sports.find(art => art.url === item.url);
-      // Quiero devolver el contrario de la comprobación
-      // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
-      return !Boolean(check);
-    });
-  } else {
-    articlesFiltered = totalArticles;
-  };
+//   if (db.sports) {
+//     articlesFiltered = totalArticles.filter(item => {
+//       const check = db.sports.find(art => art.url === item.url);
+//       // Quiero devolver el contrario de la comprobación
+//       // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
+//       return !Boolean(check);
+//     });
+//   } else {
+//     articlesFiltered = totalArticles;
+//   };
 
-  // Pinto en pantalla todos los que me vienen
-  res.render("feed", {
-    title: "NewsReader | Sports",
-    noticias: totalArticles
-  });
+//   // Pinto en pantalla todos los que me vienen
+//   res.render("feed", {
+//     title: "NewsReader | Sports",
+//     noticias: totalArticles
+//   });
 
-  // Guardo solo los que no tenía guardados antes
-  saveOnDB(articlesFiltered, 'sports');
-});
+//   // Guardo solo los que no tenía guardados antes
+//   saveOnDB(articlesFiltered, 'sports');
+// });
 
-router.get("/feed/general", async function(req, res) {
-  const news = await axios
-    .get("https://newsapi.org/v2/top-headlines?category=general", {
-      params: {
-        country: "us",
-        apiKey: process.env.NEWS_API_KEY
-      }
-    })
-    .catch(e => res.status(500).send("error"));
+// router.get("/feed/general", async function(req, res) {
+//   const news = await axios
+//     .get("https://newsapi.org/v2/top-headlines?category=general", {
+//       params: {
+//         country: "us",
+//         apiKey: process.env.NEWS_API_KEY
+//       }
+//     })
+//     .catch(e => res.status(500).send("error"));
 
-  const totalArticles = news.data.articles.map(article => ({
-    ...article,
-    id: uuid(article.url, uuid.URL),
-    rating: 0,
-    fav: (article.fav) ? true : false
-  }));
+//   const totalArticles = news.data.articles.map(article => ({
+//     ...article,
+//     id: uuid(article.url, uuid.URL),
+//     rating: 0,
+//     fav: (article.fav) ? true : false
+//   }));
 
-  if (db.general) {
-    articlesFiltered = totalArticles.filter(item => {
-      const check = db.general.find(art => art.url === item.url);
-      // Quiero devolver el contrario de la comprobación
-      // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
-      return !Boolean(check);
-    });
-  } else {
-    articlesFiltered = totalArticles;
-  };
+//   if (db.general) {
+//     articlesFiltered = totalArticles.filter(item => {
+//       const check = db.general.find(art => art.url === item.url);
+//       // Quiero devolver el contrario de la comprobación
+//       // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
+//       return !Boolean(check);
+//     });
+//   } else {
+//     articlesFiltered = totalArticles;
+//   };
 
-  // Pinto en pantalla todos los que me vienen
-  res.render("feed", {
-    title: "NewsReader | General",
-    noticias: totalArticles
-  });
+//   // Pinto en pantalla todos los que me vienen
+//   res.render("feed", {
+//     title: "NewsReader | General",
+//     noticias: totalArticles
+//   });
 
-  // Guardo solo los que no tenía guardados antes
-  saveOnDB(articlesFiltered, 'general');
-});
+//   // Guardo solo los que no tenía guardados antes
+//   saveOnDB(articlesFiltered, 'general');
+// });
 
-router.get("/feed/business", async function(req, res) {
-  const news = await axios
-    .get("https://newsapi.org/v2/top-headlines?category=business", {
-      params: {
-        country: "us",
-        apiKey: process.env.NEWS_API_KEY
-      }
-    })
-    .catch(e => res.status(500).send("error"));
+// router.get("/feed/business", async function(req, res) {
+//   const news = await axios
+//     .get("https://newsapi.org/v2/top-headlines?category=business", {
+//       params: {
+//         country: "us",
+//         apiKey: process.env.NEWS_API_KEY
+//       }
+//     })
+//     .catch(e => res.status(500).send("error"));
 
-  const totalArticles = news.data.articles.map(article => ({
-    ...article,
-    id: uuid(article.url, uuid.URL),
-    rating: 0,
-    fav: (article.fav) ? true : false
-  }));
+//   const totalArticles = news.data.articles.map(article => ({
+//     ...article,
+//     id: uuid(article.url, uuid.URL),
+//     rating: 0,
+//     fav: (article.fav) ? true : false
+//   }));
 
-  if (db.business) {
-    articlesFiltered = totalArticles.filter(item => {
-      const check = db.business.find(art => art.url === item.url);
-      // Quiero devolver el contrario de la comprobación
-      // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
-      return !Boolean(check);
-    });
-  } else {
-    articlesFiltered = totalArticles;
-  };
+//   if (db.business) {
+//     articlesFiltered = totalArticles.filter(item => {
+//       const check = db.business.find(art => art.url === item.url);
+//       // Quiero devolver el contrario de la comprobación
+//       // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
+//       return !Boolean(check);
+//     });
+//   } else {
+//     articlesFiltered = totalArticles;
+//   };
 
-  // Pinto en pantalla todos los que me vienen
-  res.render("feed", {
-    title: "NewsReader | Business",
-    noticias: totalArticles
-  });
+//   // Pinto en pantalla todos los que me vienen
+//   res.render("feed", {
+//     title: "NewsReader | Business",
+//     noticias: totalArticles
+//   });
 
-  // Guardo solo los que no tenía guardados antes
-  saveOnDB(articlesFiltered, 'business');
-});
+//   // Guardo solo los que no tenía guardados antes
+//   saveOnDB(articlesFiltered, 'business');
+// });
 
-router.get("/feed/entertainment", async function(req, res) {
-  const news = await axios
-    .get("https://newsapi.org/v2/top-headlines?category=entertainment", {
-      params: {
-        country: "us",
-        apiKey: process.env.NEWS_API_KEY
-      }
-    })
-    .catch(e => res.status(500).send("error"));
+// router.get("/feed/entertainment", async function(req, res) {
+//   const news = await axios
+//     .get("https://newsapi.org/v2/top-headlines?category=entertainment", {
+//       params: {
+//         country: "us",
+//         apiKey: process.env.NEWS_API_KEY
+//       }
+//     })
+//     .catch(e => res.status(500).send("error"));
 
-  const totalArticles = news.data.articles.map(article => ({
-    ...article,
-    id: uuid(article.url, uuid.URL),
-    rating: 0,
-    fav: (article.fav) ? true : false
-  }));
+//   const totalArticles = news.data.articles.map(article => ({
+//     ...article,
+//     id: uuid(article.url, uuid.URL),
+//     rating: 0,
+//     fav: (article.fav) ? true : false
+//   }));
 
-  if (db.entertainment) {
-    articlesFiltered = totalArticles.filter(item => {
-      const check = db.entertainment.find(art => art.url === item.url);
-      // Quiero devolver el contrario de la comprobación
-      // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
-      return !Boolean(check);
-    });
-  } else {
-    articlesFiltered = totalArticles;
-  };
+//   if (db.entertainment) {
+//     articlesFiltered = totalArticles.filter(item => {
+//       const check = db.entertainment.find(art => art.url === item.url);
+//       // Quiero devolver el contrario de la comprobación
+//       // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
+//       return !Boolean(check);
+//     });
+//   } else {
+//     articlesFiltered = totalArticles;
+//   };
 
-  // Pinto en pantalla todos los que me vienen
-  res.render("feed", {
-    title: "NewsReader | Entertainment",
-    noticias: totalArticles
-  });
+//   // Pinto en pantalla todos los que me vienen
+//   res.render("feed", {
+//     title: "NewsReader | Entertainment",
+//     noticias: totalArticles
+//   });
 
-  // Guardo solo los que no tenía guardados antes
-  saveOnDB(articlesFiltered, 'entertainment');
-});
+//   // Guardo solo los que no tenía guardados antes
+//   saveOnDB(articlesFiltered, 'entertainment');
+// });
 
 router.get("/detail/:id", async function(req, res) {
   const param = req.params.id;
