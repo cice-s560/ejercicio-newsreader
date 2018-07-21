@@ -59,7 +59,10 @@ fav.addEventListener("click", changeFav);
 
 const rate = document.querySelector("article").getAttribute("data-rate");
 const inputRate = document.querySelector(`input[value="${rate}"]`);
-inputRate.setAttribute("checked", "checked");
+
+if (inputRate) {
+  inputRate.setAttribute("checked", "checked");
+}
 
 function updateRating(e) {
   fetch(`/update-rating/${idNoticia}`, {

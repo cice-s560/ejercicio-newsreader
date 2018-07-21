@@ -23,7 +23,9 @@ router.get("/", function(req, res, next) {
 
 router.get("/feed", async function(req, res) {
   const filter = req.query.category;
-  const urlToFetch = filter ? `https://newsapi.org/v2/top-headlines?category=${filter}` : "https://newsapi.org/v2/top-headlines";
+  const urlToFetch = filter
+    ? `https://newsapi.org/v2/top-headlines?category=${filter}`
+    : "https://newsapi.org/v2/top-headlines";
   const news = await axios
     .get(urlToFetch, {
       params: {
@@ -71,7 +73,9 @@ router.patch("/update-rating/:id", async function(req, res) {
   });
   fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
 
-  return res.status(200).json({resp: "OK", dato: "algo", data: req.body.rating});
+  return res
+    .status(200)
+    .json({ resp: "OK", dato: "algo", data: req.body.rating });
 });
 
 router.patch("/update-fav/:id", async function(req, res) {
@@ -80,6 +84,21 @@ router.patch("/update-fav/:id", async function(req, res) {
   fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
 
   return res.status(200).send();
+});
+
+router.get("/favs", (req, res) => {
+  const favArticles = db.articles.filter(item => item.fav === true);
+  const filter = req.query.category;
+  const favArticlesFiltered = favArticles.filter(
+    item => item.category === filter
+  );
+  const articlesToShow = filter ? favArticlesFiltered : favArticles;
+
+  res.render("feed", {
+    title: "NewsReader | Favoritos",
+    noticias: articlesToShow,
+    isFavsPage: true
+  });
 });
 
 function formatDate(format, date) {

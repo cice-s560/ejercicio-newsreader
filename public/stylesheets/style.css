@@ -65,6 +65,19 @@ img.detail-image {
   cursor: pointer;
 }
 
+.menu-primary {
+  margin-left: 3rem;
+}
+
+.card-footer {
+  padding: 0 1rem;
+}
+
+.card-footer > span {
+  margin-left: 1.5rem;
+}
+
+
 /*Código misterio....*/
 .rating {
   border: none;

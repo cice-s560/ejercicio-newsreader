@@ -24,6 +24,15 @@ html
                     a.navbar-item(href="/feed?category=technology") Tecnología
                     a.navbar-item(href="/feed?category=science") Ciencia
         </nav>
+        
+        if isFavsPage
+            nav.navbar
+                .navbar-menu.content
+                    span.navbar-item.has-text-weight-bold Categorías de Favoritos
+                    a.navbar-item(href="/favs?category=sports") Deportes
+                    a.navbar-item(href="/favs?category=technology") Tecnología
+                    a.navbar-item(href="/favs?category=science") Ciencia
+
 
     block content
 
