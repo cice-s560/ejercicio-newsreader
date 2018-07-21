@@ -64,17 +64,13 @@ router.get("/", function(req, res, next) {
   res.render("landing", { title: "NewsReader" });
 });
 
-router.get("/feed", async function(req, res) {  
-  let category = req.query.category;
-  console.log(category);
-  
-  if (category === undefined) {
-    category = "general"
-  }
-  const urlQuery = `?category=${category}`  
-
+router.get("/feed", async function(req, res) {
+  const filter = req.query.category;
+  const urlToFetch = filter
+    ? `https://newsapi.org/v2/top-headlines?category=${filter}`
+    : "https://newsapi.org/v2/top-headlines";
   const news = await axios
-    .get(`https://newsapi.org/v2/top-headlines${urlQuery}`, {
+    .get(urlToFetch, {
       params: {
         country: "us",
         apiKey: process.env.NEWS_API_KEY
@@ -86,7 +82,8 @@ router.get("/feed", async function(req, res) {
     ...article,
     id: uuid(article.url, uuid.URL),
     rating: 0,
-    fav: (article.fav) ? true : false
+    fav: false,
+    category: filter
   }));
 
   let articlesFiltered = filterArticles(db, totalArticles, category);
@@ -305,7 +302,9 @@ router.patch("/update-rating/:id", async function(req, res) {
   });
   fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
 
-  return res.status(200).send();
+  return res
+    .status(200)
+    .json({ resp: "OK", dato: "algo", data: req.body.rating });
 });
 
 router.patch("/update-fav/:id", async function(req, res) {
@@ -317,6 +316,21 @@ router.patch("/update-fav/:id", async function(req, res) {
   fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
 
   return res.status(200).send();
+});
+
+router.get("/favs", (req, res) => {
+  const favArticles = db.articles.filter(item => item.fav === true);
+  const filter = req.query.category;
+  const favArticlesFiltered = favArticles.filter(
+    item => item.category === filter
+  );
+  const articlesToShow = filter ? favArticlesFiltered : favArticles;
+
+  res.render("feed", {
+    title: "NewsReader | Favoritos",
+    noticias: articlesToShow,
+    isFavsPage: true
+  });
 });
 
 function formatDate(format, date) {
