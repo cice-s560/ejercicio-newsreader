@@ -2,38 +2,36 @@ extends layout
 
 block content
    
-    main.content
+    main.content.feed-main
         .columns.is-multiline
             each item in noticias
                 .column.is-4-tablet.is-3-desktop
 
                     a(href!="http://localhost:3000/detail/" + item.id)
-                        <div class="card">
-                            <div class="card-image">
-                                <figure class="image is-4by3 is-marginless">
-                                <img src="#{item.urlToImage}" alt="Placeholder image">
-                                </figure>
-                            </div>
-                            <div class="card-content">
-                                <div class="media">
-                                    <div class="media-content">
-                                        <p class="title is-4">#{item.title}</p>
+                        div.card
+                            div.card-image
+                                figure.image.is-4by3.is-marginless
+                                    <img src="#{item.urlToImage}" alt="Placeholder image">
+                                
+                            div.card-content
+                                div.media
+                                    div.media-content
+                                        p.title.is-4!= item.title
                                         if item.author
-                                            <p class="subtitle is-6">@#{item.author}</p>
-                                        <p class="subtitle is-6">+#{item.source.name}</p>
-                                    </div>
-                                </div>
+                                            p.subtitle.is-6 @#{item.author}
+                                        p.subtitle.is-6 +#{item.source.name}
 
-                                <div class="content">
+                                div.content
                                     p= item.description
                                     if item.labels
                                         each label in item.labels
                                             a(href=label.url)= label.text
                                     <br>
-                                    time(datetime="2016-1-1")= item.publishedAt
-                                </div>
-                            </div>
+                                    span= item.publishedAt
+                                
                             footer.card-footer
-                                span.icon.is-medium.has-text-danger
-                                    i.fas.fa-heart.fa-lg
-                        </div>
+                                span.icon.is-medium.card-footer-item
+                                    if item.fav
+                                        i.fas.fa-heart.fa-lg.has-text-danger
+                                    else
+                                        i.fas.fa-heart.fa-lg

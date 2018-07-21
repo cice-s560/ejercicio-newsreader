@@ -2,27 +2,28 @@ extends layout
 
 block content
     article.content(data-idnoticia=article.id, data-rate=article.rating) 
-        header
+        header.detalle-header
             .columns.is-multiline
                 .column.is-12
                     figure
                         img(src!=article.urlToImage alt!="image-" + article.source.name class="detail-image")
-                .column.is-6
+            .columns.detalle-texto                        
+                .column.is-7
                     .detail-title
                         h2!= article.title
                         h3.is-marginless.is-size-5.has-text-grey 
                             if article.author
                                 span @#{article.author} | 
                             span +#{article.source.name}
-                .column.is-6
+                .column.is-5.detalle-acciones
                     if article.fav
-                        div.is-pulled-right.fav.has-text-danger
-                            span.icon.is-large
-                                i.fas.fa-heart.fa-lg
+                        div.fav.has-text-danger.is-marginless
+                            span.icon.is-medium
+                                i.fas.fa-heart
                     else
-                        div.is-pulled-right.fav
-                            span.icon.is-large
-                                i.fas.fa-heart.fa-lg
+                        div.fav.is-marginless
+                            span.icon.is-medium
+                                i.fas.fa-heart
                     fielset.rating.is-pulled-right
                         <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
                         <input type="radio" id="star4half" name="rating" value="4.5" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
@@ -39,6 +40,7 @@ block content
 
         footer.footer-detail
             a.is-link.button(href!=article.url) Ver noticia
+            button.button(type="button", onclick="window.history.back()") Volver al feed
 
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
     script(src="/js/detail.js")

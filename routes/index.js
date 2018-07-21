@@ -22,40 +22,81 @@ router.get("/", function(req, res, next) {
 });
 
 router.get("/feed", async function(req, res) {
-  const news = await axios
-    .get("https://newsapi.org/v2/top-headlines", {
-      params: {
-        country: "us",
-        apiKey: process.env.NEWS_API_KEY
-      }
-    })
-    .catch(e => res.status(500).send("error"));
+    
+    // Establecemos los parametros de busqueda
+    let urlparams = "";
+    let currentCategory = "top20";
+    switch(req.query.category){
+        case "sports":
+            urlparams = "?category=sports"
+            currentCategory = "sports";
+            break;
+        case "technology":
+            urlparams = "?category=technology"
+            currentCategory = "technology";
+            break;
+    }
 
-  const totalArticles = news.data.articles.map(article => ({
-    ...article,
-    id: uuid(article.url, uuid.URL),
-    rating: 0,
-    fav: false
-  }));
+    // Noticias recuperadas desde la API
+    const news = await axios
+        .get(`https://newsapi.org/v2/top-headlines${urlparams}`, {
+        params: {
+            country: "us",
+            apiKey: process.env.NEWS_API_KEY
+        }
+        })
+        .catch(e => res.status(500).send("error"));
 
-  const articlesFiltered = totalArticles.filter(item => {
-    const check = db.articles.find(art => art.url === item.url);
-    // Quiero devolver el contrario de la comprobación
-    // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
-    return !Boolean(check);
-  });
+    // Articulos nuevos formateados con propiedades necesarias para app
+    const a_newArticles = [];
+    const a_renderArticles = [];
+    news.data.articles.forEach( newArticle =>{
 
-  // Pinto en pantalla todos los que me vienen
-  res.render("feed", {
-    title: "NewsReader | Feed",
-    noticias: totalArticles
-  });
+        newArticle.rating = 0;
+        newArticle.fav = false;
+        newArticle.id = uuid(newArticle.url, uuid.URL);
+        newArticle.category = currentCategory;
+        if(newArticle.publishedAt)
+            newArticle.publishedAt = formatDate("d-m-Y", newArticle.publishedAt);
 
-  // Guardo solo los que no tenía guardados antes
-  saveOnDB(articlesFiltered);
+        const dbArticle = db.articles.find(dbArticle => dbArticle.id === newArticle.id);   
+
+        if(dbArticle){
+
+            // Articulo esta en db
+            a_renderArticles.push(dbArticle);
+
+        }else{
+
+            // Articulo no esta en db
+            a_newArticles.push(newArticle);
+            a_renderArticles.push(newArticle);
+
+        }
+
+    });
+
+    res.render("feed", {
+        title: "NewsReader | Feed",
+        noticias: a_renderArticles
+    });
+    res.status(200).send();
+    saveOnDB(a_newArticles);
+    
 });
 
-router.get("/detail/:id", async function(req, res) {
+router.get("/favourites", (req, res) => {
+
+    res.render("feed", { 
+        title: "NewsReader | Favoritos", 
+        noticias: db.articles.filter(dbArticle => dbArticle.fav)
+    });
+
+    res.status(200).send();
+
+});
+
+router.get("/detail/:id", function(req, res) {
   const param = req.params.id;
   const article = db.articles.find(item => item.id === param);
 
@@ -66,17 +107,19 @@ router.patch("/update-rating/:id", async function(req, res) {
   db.articles.forEach(article => {
     if (article.id === req.params.id) article.rating = req.body.rating;
   });
+  res.status(200).send();
   fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
-
-  return res.status(200).send();
+  
 });
 
-router.patch("/update-fav/:id", async function(req, res) {
-  const article = db.articles.find(item => item.id === req.params.id);
-  article.fav = !Boolean(article.fav);
-  fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
+router.patch("/update-favorito/:id", async function(req, res) {
+  
+    console.log("Requested update favoritos");
+    const article = db.articles.find(item => item.id === req.params.id)
+    article.fav = !Boolean(article.fav);
+    res.status(200).send();
+    fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
 
-  return res.status(200).send();
 });
 
 function formatDate(format, date) {
