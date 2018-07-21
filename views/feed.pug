@@ -7,7 +7,7 @@ block content
             form(method="get", action="feed").query-filters
                 div.searchbar.button
                     input(type="text", placeholder="busqueda", name="search")
-                    button(type="submit")
+                    button(data-app="submitSearch", type="submit")
                         i.fas.fa-search
             form(method="get", action="feed").query-filters
                 div.searchbar
@@ -15,9 +15,9 @@ block content
                         option(value="us") Noticias en inglés
                         option(value="mx") Noticias en español
                         option(value="ru") Noticias en ruso
-                    button(type="submit").button Buscar
+                    button(data-app="submitCountry", type="submit").button Buscar
 
-    main.content.feed-main
+    main(data-app="feed").content.feed-main
         
         if noticias.length > 0
             .columns.is-multiline
@@ -57,3 +57,27 @@ block content
         else
             h2.has-text-centered Oops!
             p.has-text-centered No se ha encontrado ningún artículo
+
+
+    <script type="text/template" data-template="card">
+        .column.is-4-tablet.is-3-desktop
+                a(href!="http://localhost:3000/detail/{{id}}")
+                    div.card
+                        div.card-image
+                            figure.image.is-4by3.is-marginless
+                                <img src="{{urlToImage}}" alt="Placeholder image">
+                            
+                        div.card-content
+                            div.media
+                                div.media-content
+                                    p.title.is-4 {{title}}
+                                    p.subtitle.is-6 @{{author}}
+                                    p.subtitle.is-6 +#{{sourceName}}
+
+                            div.content
+                                p {{description}}
+                                <br>
+                                span {{publishedAt}}
+                        
+        </script>
+    script(src="js/feed.js")

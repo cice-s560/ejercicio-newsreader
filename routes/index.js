@@ -83,12 +83,19 @@ router.get("/feed", async function(req, res) {
     }
   });
 
-  res.render("feed", {
-    title: "NewsReader | Feed",
-    noticias: a_renderArticles,
-    isHomePage: true
-  });
   res.status(200);
+
+  if (!req.query.format) {
+    res.render("feed", {
+      title: "NewsReader | Feed",
+      noticias: a_renderArticles,
+      isHomePage: true
+    });
+  } else if (req.query.format === "json") {
+    res.setHeader("Content-Type", "application/json");
+    res.send(JSON.stringify(a_renderArticles));
+  }
+
   saveOnDB(a_newArticles);
 });
 
