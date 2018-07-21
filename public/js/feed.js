@@ -28,9 +28,15 @@
       let card = template;
       card = card.split("{{urlToImage}}").join(item.urlToImage);
       card = card.split("{{title}}").join(item.title);
-      card = card.split("{{author}}").join(item.author);
+
+      if (item.author) card = card.split("{{author}}").join(item.author);
+      else card = card.split("{{author}}").join("newsapi");
+
+      if (item.description)
+        card = card.split("{{description}}").join(item.description);
+      else card = card.split("{{description}}").join("");
+
       card = card.split("{{sourceName}}").join(item.source.name);
-      card = card.split("{{description}}").join(item.description);
       card = card.split("{{publishedAt}}").join(item.publishedAt);
       card = card.split("{{id}}").join(item.id);
       html = html + card;
@@ -45,7 +51,7 @@
         urlParams = `&country=${value}`;
         break;
       case "search":
-        urlParams = `&q=${value}`;
+        urlParams = `&search=${value}`;
         break;
     }
     fetch(`/feed?format=json${urlParams}`, {
@@ -56,6 +62,7 @@
     })
       .then(resp => resp.json())
       .then(data => {
+        console.log(data);
         renderCards(data, feed, card);
       });
   }
