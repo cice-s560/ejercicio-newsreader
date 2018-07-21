@@ -22,8 +22,10 @@ router.get("/", function(req, res, next) {
 });
 
 router.get("/feed", async function(req, res) {
+  const filter = req.query.category;
+  const urlToFetch = filter ? `https://newsapi.org/v2/top-headlines?category=${filter}` : "https://newsapi.org/v2/top-headlines";
   const news = await axios
-    .get("https://newsapi.org/v2/top-headlines", {
+    .get(urlToFetch, {
       params: {
         country: "us",
         apiKey: process.env.NEWS_API_KEY
@@ -35,7 +37,8 @@ router.get("/feed", async function(req, res) {
     ...article,
     id: uuid(article.url, uuid.URL),
     rating: 0,
-    fav: false
+    fav: false,
+    category: filter
   }));
 
   const articlesFiltered = totalArticles.filter(item => {

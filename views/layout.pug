@@ -15,6 +15,14 @@ html
                         img(src="/images/logo.png")
                     h1 NewsReader
             </div>
+            .navbar-menu.content
+                .navbar-start.menu-primary
+                    a.navbar-item(href="/favs") Favoritos
+                .navbar-end
+                    a.navbar-item(href="/feed") Todo
+                    a.navbar-item(href="/feed?category=sports") Deportes
+                    a.navbar-item(href="/feed?category=technology") Tecnología
+                    a.navbar-item(href="/feed?category=science") Ciencia
         </nav>
 
     block content
