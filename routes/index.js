@@ -21,12 +21,12 @@ router.get("/", function(req, res, next) {
   res.render("landing", { title: "NewsReader" });
 });
 
-router.get("/feed/:category?", async function(req, res) {
+router.get("/feed", async function(req, res) {
     
     // Establecemos los parametros de busqueda
     let urlparams = "";
     let currentCategory = "top20";
-    switch(req.params.category){
+    switch(req.query.category){
         case "sports":
             urlparams = "?category=sports"
             currentCategory = "sports";
