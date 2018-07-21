@@ -68,7 +68,7 @@ router.patch("/update-rating/:id", async function(req, res) {
   });
   fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
 
-  return res.status(200).send();
+  return res.status(200).json({resp: "OK", dato: "algo", data: req.body.rating});
 });
 
 router.patch("/update-fav/:id", async function(req, res) {
