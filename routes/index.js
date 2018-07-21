@@ -35,6 +35,9 @@ router.get("/feed", async function(req, res) {
       currentCategory = "technology";
       break;
   }
+  if (req.query.search) {
+    urlparams = `?q=${req.query.search}`;
+  }
 
   // Noticias recuperadas desde la API
   const news = await axios
@@ -73,7 +76,8 @@ router.get("/feed", async function(req, res) {
 
   res.render("feed", {
     title: "NewsReader | Feed",
-    noticias: a_renderArticles
+    noticias: a_renderArticles,
+    isHomePage: true
   });
   res.status(200);
   saveOnDB(a_newArticles);
