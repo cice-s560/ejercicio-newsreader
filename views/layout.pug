@@ -10,7 +10,7 @@ html
     header
         nav.navbar(role="navigation", aria-label="main navigation")
             div.navbar-brand.content.custom-brand
-                a(href="/")
+                a(href="/feed")
                     figure.image.is-32x32.logo-brand.is-marginless
                         img(src="/images/logo.png")
                     h1.is-marginless NewsReader
@@ -18,7 +18,16 @@ html
                     a(href="/feed").button Top 20
                     a(href="/feed?category=sports").button Deportes
                     a(href="/feed?category=technology").button Tecnología
-                    a(href="/favourites").button Favoritos
+                    if !isFavPage
+                        a(href="/favourites").button Favoritos
+        if isFavPage
+            nav.navbar.navbar-favs
+                p.has-text-weight-semibold Filtar favoritos por:
+                div.navbar-favs-categories  
+                    a(href="/favourites") Todo
+                    a(href="/favourites?category=top20") Top20
+                    a(href="/favourites?category=sports") Deportes
+                    a(href="/favourites?category=technology") Tecnología
 
     block content
 

@@ -22,78 +22,93 @@ router.get("/", function(req, res, next) {
 });
 
 router.get("/feed", async function(req, res) {
-    
-    // Establecemos los parametros de busqueda
-    let urlparams = "";
-    let currentCategory = "top20";
-    switch(req.query.category){
-        case "sports":
-            urlparams = "?category=sports"
-            currentCategory = "sports";
-            break;
-        case "technology":
-            urlparams = "?category=technology"
-            currentCategory = "technology";
-            break;
+  // Establecemos los parametros de busqueda
+  let urlparams = "";
+  let currentCategory = "top20";
+  switch (req.query.category) {
+    case "sports":
+      urlparams = "?category=sports";
+      currentCategory = "sports";
+      break;
+    case "technology":
+      urlparams = "?category=technology";
+      currentCategory = "technology";
+      break;
+  }
+
+  // Noticias recuperadas desde la API
+  const news = await axios
+    .get(`https://newsapi.org/v2/top-headlines${urlparams}`, {
+      params: {
+        country: "us",
+        apiKey: process.env.NEWS_API_KEY
+      }
+    })
+    .catch(e => res.status(500).send("error"));
+
+  // Articulos nuevos formateados con propiedades necesarias para app
+  const a_newArticles = [];
+  const a_renderArticles = [];
+  news.data.articles.forEach(newArticle => {
+    newArticle.rating = 0;
+    newArticle.fav = false;
+    newArticle.id = uuid(newArticle.url, uuid.URL);
+    newArticle.category = currentCategory;
+    if (newArticle.publishedAt)
+      newArticle.publishedAt = formatDate("d-m-Y", newArticle.publishedAt);
+
+    const dbArticle = db.articles.find(
+      dbArticle => dbArticle.id === newArticle.id
+    );
+
+    if (dbArticle) {
+      // Articulo esta en db
+      a_renderArticles.push(dbArticle);
+    } else {
+      // Articulo no esta en db
+      a_newArticles.push(newArticle);
+      a_renderArticles.push(newArticle);
     }
+  });
 
-    // Noticias recuperadas desde la API
-    const news = await axios
-        .get(`https://newsapi.org/v2/top-headlines${urlparams}`, {
-        params: {
-            country: "us",
-            apiKey: process.env.NEWS_API_KEY
-        }
-        })
-        .catch(e => res.status(500).send("error"));
-
-    // Articulos nuevos formateados con propiedades necesarias para app
-    const a_newArticles = [];
-    const a_renderArticles = [];
-    news.data.articles.forEach( newArticle =>{
-
-        newArticle.rating = 0;
-        newArticle.fav = false;
-        newArticle.id = uuid(newArticle.url, uuid.URL);
-        newArticle.category = currentCategory;
-        if(newArticle.publishedAt)
-            newArticle.publishedAt = formatDate("d-m-Y", newArticle.publishedAt);
-
-        const dbArticle = db.articles.find(dbArticle => dbArticle.id === newArticle.id);   
-
-        if(dbArticle){
-
-            // Articulo esta en db
-            a_renderArticles.push(dbArticle);
-
-        }else{
-
-            // Articulo no esta en db
-            a_newArticles.push(newArticle);
-            a_renderArticles.push(newArticle);
-
-        }
-
-    });
-
-    res.render("feed", {
-        title: "NewsReader | Feed",
-        noticias: a_renderArticles
-    });
-    res.status(200);
-    saveOnDB(a_newArticles);
-    
+  res.render("feed", {
+    title: "NewsReader | Feed",
+    noticias: a_renderArticles
+  });
+  res.status(200);
+  saveOnDB(a_newArticles);
 });
 
 router.get("/favourites", (req, res) => {
+  let currentCategory = false;
+  switch (req.query.category) {
+    case "sports":
+      currentCategory = "sports";
+      break;
+    case "technology":
+      currentCategory = "technology";
+      break;
+    case "top20":
+      currentCategory = "top20";
+      break;
+  }
 
-    res.render("feed", { 
-        title: "NewsReader | Favoritos", 
-        noticias: db.articles.filter(dbArticle => dbArticle.fav)
-    });
+  let renderArticles = [];
 
-    res.status(200);
+  if (!currentCategory)
+    renderArticles = db.articles.filter(dbArticle => dbArticle.fav);
+  else
+    renderArticles = db.articles.filter(
+      dbArticle => dbArticle.fav && dbArticle.category === currentCategory
+    );
 
+  res.render("feed", {
+    title: "NewsReader | Favoritos",
+    noticias: renderArticles,
+    isFavPage: true
+  });
+
+  res.status(200);
 });
 
 router.get("/detail/:id", function(req, res) {
@@ -109,17 +124,14 @@ router.patch("/update-rating/:id", async function(req, res) {
   });
   res.status(200).send();
   fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
-  
 });
 
 router.patch("/update-favorito/:id", async function(req, res) {
-  
-    console.log("Requested update favoritos");
-    const article = db.articles.find(item => item.id === req.params.id)
-    article.fav = !Boolean(article.fav);
-    res.status(200).send();
-    fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
-
+  console.log("Requested update favoritos");
+  const article = db.articles.find(item => item.id === req.params.id);
+  article.fav = !Boolean(article.fav);
+  res.status(200).send();
+  fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
 });
 
 function formatDate(format, date) {

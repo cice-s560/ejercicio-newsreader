@@ -3,35 +3,42 @@ extends layout
 block content
    
     main.content.feed-main
-        .columns.is-multiline
-            each item in noticias
-                .column.is-4-tablet.is-3-desktop
+        
+        if noticias.length > 0
+            .columns.is-multiline
+                each item in noticias
+                    .column.is-4-tablet.is-3-desktop
 
-                    a(href!="http://localhost:3000/detail/" + item.id)
-                        div.card
-                            div.card-image
-                                figure.image.is-4by3.is-marginless
-                                    <img src="#{item.urlToImage}" alt="Placeholder image">
-                                
-                            div.card-content
-                                div.media
-                                    div.media-content
-                                        p.title.is-4!= item.title
-                                        if item.author
-                                            p.subtitle.is-6 @#{item.author}
-                                        p.subtitle.is-6 +#{item.source.name}
+                        a(href!="http://localhost:3000/detail/" + item.id)
+                            div.card
+                                div.card-image
+                                    figure.image.is-4by3.is-marginless
+                                        <img src="#{item.urlToImage}" alt="Placeholder image">
+                                    
+                                div.card-content
+                                    div.media
+                                        div.media-content
+                                            p.title.is-4!= item.title
+                                            if item.author
+                                                p.subtitle.is-6 @#{item.author}
+                                            p.subtitle.is-6 +#{item.source.name}
 
-                                div.content
-                                    p= item.description
-                                    if item.labels
-                                        each label in item.labels
-                                            a(href=label.url)= label.text
-                                    <br>
-                                    span= item.publishedAt
-                                
-                            footer.card-footer
-                                span.icon.is-medium.card-footer-item
-                                    if item.fav
-                                        i.fas.fa-heart.fa-lg.has-text-danger
-                                    else
-                                        i.fas.fa-heart.fa-lg
+                                    div.content
+                                        p= item.description
+                                        if item.labels
+                                            each label in item.labels
+                                                a(href=label.url)= label.text
+                                        <br>
+                                        span= item.publishedAt
+
+                                if item.fav                                
+                                    footer.card-footer
+                                        span.icon.is-medium.card-footer-item
+                                            i.fas.fa-heart.fa-lg.has-text-danger
+
+                                        span.icon.is-medium.card-footer-item
+                                            i.fas.fa-star.fa-lg.has-text-warning
+                                            span!= item.rating
+        else
+            h2.has-text-centered Oops!
+            p.has-text-centered No se ha encontrado ningún artículo
