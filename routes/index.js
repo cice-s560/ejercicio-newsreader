@@ -80,7 +80,7 @@ router.get("/feed", async function(req, res) {
         title: "NewsReader | Feed",
         noticias: a_renderArticles
     });
-    res.status(200).send();
+    res.status(200);
     saveOnDB(a_newArticles);
     
 });
@@ -92,7 +92,7 @@ router.get("/favourites", (req, res) => {
         noticias: db.articles.filter(dbArticle => dbArticle.fav)
     });
 
-    res.status(200).send();
+    res.status(200);
 
 });
 
