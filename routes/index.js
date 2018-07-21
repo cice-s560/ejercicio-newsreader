@@ -23,27 +23,36 @@ router.get("/", function(req, res, next) {
 
 router.get("/feed", async function(req, res) {
   // Establecemos los parametros de busqueda
-  let urlparams = "";
+  let selectedCategory = "";
   let currentCategory = "top20";
   switch (req.query.category) {
     case "sports":
-      urlparams = "?category=sports";
+      selectedCategory = "sports";
       currentCategory = "sports";
       break;
     case "technology":
-      urlparams = "?category=technology";
+      selectedCategory = "technology";
       currentCategory = "technology";
       break;
   }
+
+  let searchQuery = "";
   if (req.query.search) {
-    urlparams = `?q=${req.query.search}`;
+    searchQuery = req.query.search;
+  }
+
+  let selectedCountry = "us";
+  if (req.query.country) {
+    selectedCountry = req.query.country;
   }
 
   // Noticias recuperadas desde la API
   const news = await axios
-    .get(`https://newsapi.org/v2/top-headlines${urlparams}`, {
+    .get(`https://newsapi.org/v2/top-headlines`, {
       params: {
-        country: "us",
+        country: selectedCountry,
+        category: selectedCategory,
+        q: searchQuery,
         apiKey: process.env.NEWS_API_KEY
       }
     })
