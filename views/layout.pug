@@ -24,7 +24,16 @@ html
                     a.navbar-item(href="/feed?category=technology") Tecnología
                     a.navbar-item(href="/feed?category=science") Ciencia
         </nav>
-        
+        form.container(action="/search", method="get")
+            .is-two-fifths
+                .field.is-horizontal
+                    .field
+                        p.control.has-icons-left
+                            input.input(type="text", name="q", placeholder="Buscar...")
+                            span.icon.is-small.is-left
+                                i.fas.fa-search
+                    .field
+                        button.button.is-link Buscar
         if isFavsPage
             nav.navbar
                 .navbar-menu.content
