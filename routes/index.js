@@ -61,10 +61,15 @@ router.get("/feed", async function(req, res) {
 });
 
 router.get("/search", async function(req, res) {
-  const filter = req.query.q;
-  const urlToFetch = filter
-    ? `https://newsapi.org/v2/top-headlines?q=${filter}`
-    : "https://newsapi.org/v2/top-headlines";
+  const search = req.query.q;
+  const category = req.query.category;
+
+  if(search && category) {
+    urlToFetch = `https://newsapi.org/v2/top-headlines?category=${category}q=${search}` //everything o top-headlines??
+  } else {
+    urlToFetch = "https://newsapi.org/v2/top-headlines";
+  }
+
   const news = await axios
     .get(urlToFetch, {
       params: {

@@ -24,16 +24,22 @@ html
                     a.navbar-item(href="/feed?category=technology") Tecnología
                     a.navbar-item(href="/feed?category=science") Ciencia
         </nav>
-        form.container(action="/search", method="get")
-            .is-two-fifths
-                .field.is-horizontal
-                    .field
-                        p.control.has-icons-left
-                            input.input(type="text", name="q", placeholder="Buscar...")
-                            span.icon.is-small.is-left
-                                i.fas.fa-search
-                    .field
-                        button.button.is-link Buscar
+        form(action="/search", method="get")
+            
+            .field.has-addons.has-addons-right
+                p.control
+                    span.select
+                        select(name="category")
+                            option(value="", selected="selected") Todo
+                            option(value="sports") Deportes
+                            option(value="technology") Tecnología
+                            option(value="science") Ciencia
+                p.control.has-icons-left
+                    input.input(type="text", name="q", placeholder="Buscar...")
+                    span.icon.is-small.is-left
+                        i.fas.fa-search
+                p.control
+                    button.button.is-link Buscar
         if isFavsPage
             nav.navbar
                 .navbar-menu.content
