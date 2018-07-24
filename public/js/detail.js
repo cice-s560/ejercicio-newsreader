@@ -74,4 +74,4 @@ function updateRating(e) {
   }).catch(e => console.log("ERROR", e));
 }
 
-inputsRating.forEach(item => item.addEventListener("change", updateRating));
+inputsRating.forEach(item => item.addEventListener("input", updateRating));

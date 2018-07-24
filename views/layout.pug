@@ -24,22 +24,23 @@ html
                     a.navbar-item(href="/feed?category=technology") Tecnología
                     a.navbar-item(href="/feed?category=science") Ciencia
         </nav>
-        form(action="/search", method="get")
-            
+        
+        form            
             .field.has-addons.has-addons-right
                 p.control
                     span.select
-                        select(name="category")
+                        select#category(name="category")
                             option(value="", selected="selected") Todo
                             option(value="sports") Deportes
                             option(value="technology") Tecnología
                             option(value="science") Ciencia
                 p.control.has-icons-left
-                    input.input(type="text", name="q", placeholder="Buscar...")
+                    input#search.input(type="text", name="q", placeholder="Buscar...")
                     span.icon.is-small.is-left
                         i.fas.fa-search
-                p.control
-                    button.button.is-link Buscar
+            
+            script(src="/js/search.js")
+ 
         if isFavsPage
             nav.navbar
                 .navbar-menu.content

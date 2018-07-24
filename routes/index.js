@@ -17,6 +17,7 @@ function saveOnDB(data) {
   fs.writeFileSync(dbPath, dataString, "utf8");
 }
 
+
 router.get("/", function(req, res, next) {
   res.render("landing", { title: "NewsReader" });
 });
@@ -60,9 +61,10 @@ router.get("/feed", async function(req, res) {
   saveOnDB(articlesFiltered);
 });
 
-router.get("/search", async function(req, res) {
-  const search = req.query.q;
-  const category = req.query.category;
+router.get("/search:q:category", async function(req, res) {
+  
+  const search = req.params.q;
+  const category = req.params.category;
 
   if(search && category) {
     urlToFetch = `https://newsapi.org/v2/top-headlines?q=${search}&category=${category}`;
