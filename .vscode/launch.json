@@ -4,7 +4,6 @@
     // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
             "type": "node",
             "request": "launch",
@@ -17,10 +16,11 @@
             "port": 9229
         },
         {
-            "type": "node",
+            "type": "chrome",
             "request": "launch",
-            "name": "Iniciar programa",
-            "program": "${workspaceFolder}\\bin\\www"
+            "name": "Launch Chrome",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }

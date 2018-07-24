@@ -65,8 +65,13 @@ router.get("/search", async function(req, res) {
   const category = req.query.category;
 
   if(search && category) {
-    urlToFetch = `https://newsapi.org/v2/top-headlines?category=${category}q=${search}` //everything o top-headlines??
-  } else {
+    urlToFetch = `https://newsapi.org/v2/top-headlines?q=${search}&category=${category}`;
+  } else if(category) {
+    urlToFetch = `https://newsapi.org/v2/top-headlines?category=${category}`;
+  } else if(search) {
+    urlToFetch = `https://newsapi.org/v2/top-headlines?q=${search}`;
+  }
+   else {
     urlToFetch = "https://newsapi.org/v2/top-headlines";
   }
 
