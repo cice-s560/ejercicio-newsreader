@@ -60,6 +60,50 @@ router.get("/feed", async function(req, res) {
   saveOnDB(articlesFiltered);
 });
 
+router.get("/search", async function(req, res) {
+  const search = req.query.q;
+  const category = req.query.category;
+
+  if(search && category) {
+    urlToFetch = `https://newsapi.org/v2/top-headlines?category=${category}q=${search}` //everything o top-headlines??
+  } else {
+    urlToFetch = "https://newsapi.org/v2/top-headlines";
+  }
+
+  const news = await axios
+    .get(urlToFetch, {
+      params: {
+        country: "us",
+        apiKey: process.env.NEWS_API_KEY
+      }
+    })
+    .catch(e => res.status(500).send("error"));
+
+  const totalArticles = news.data.articles.map(article => ({
+    ...article,
+    id: uuid(article.url, uuid.URL),
+    rating: 0,
+    fav: false
+  }));
+
+  const articlesFiltered = totalArticles.filter(item => {
+    const check = db.articles.find(art => art.url === item.url);
+    // Quiero devolver el contrario de la comprobación
+    // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
+    return !Boolean(check);
+  });
+
+  // Pinto en pantalla todos los que me vienen
+  res.render("feed", {
+    title: "NewsReader | Feed",
+    noticias: totalArticles
+  });
+
+  // Guardo solo los que no tenía guardados antes
+  saveOnDB(articlesFiltered);
+});
+
+
 router.get("/detail/:id", async function(req, res) {
   const param = req.params.id;
   const article = db.articles.find(item => item.id === param);
