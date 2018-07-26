@@ -7,8 +7,8 @@ input_category.addEventListener("change", send_search);
 function send_search() {
 let search = input_search.value;
 let category = input_category.value;
-  fetch('/search/?q='+search+'&category='+category).then(data => {
-
+  fetch(`/feed/?q=${search}&category=${category}`, {
+    method: "GET"
   })
   .catch(error => console.log('error', error))
 };
