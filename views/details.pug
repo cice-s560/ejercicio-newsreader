@@ -1,0 +1,51 @@
+extends layout
+
+block content
+    main.content.details-content
+        <section class="hero">
+            <div class="hero-head">
+                .columns
+                    .column.is-12
+                        <figure class="image">
+                            if (noticia.urlToImage)
+                                <img src="#{noticia.urlToImage}">
+                            else
+                                <img src="http://via.placeholder.com/700x450">
+                        </figure>
+            </div>
+            <div class="hero-body">
+                <p class="title">#{noticia.title}</p>
+                if (noticia.author)
+                    <p class="subtitle">Author: #{noticia.author}</p>
+                if (noticia.source.name)
+                    <p class="subtitle">Source: #{noticia.source.name}</p>
+                <p>#{noticia.description}</p>
+            </div>
+            <div class="hero-foot">
+                <div class="share">
+                    <a class="button is-link is-outlined">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a class="button is-info is-outlined">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a class="button is-danger is-outlined">
+                        <i class="fab fa-google-plus-g"></i>
+                    </a>
+                    <a class="button is-success is-outlined">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+                <div class="favs">
+                    <button class="button is-large toggleFav has-text-danger" data-noticiaIndex="#{index}">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+                <div class="rate">
+                    each i in [1, 2, 3, 4, 5]
+                        <button class="button is-large toggleRate has-text-danger" data-notIndex="#{index}" data-rate="#{i}">
+                            <i class="far fa-star"></i>
+                        </button>
+                </div>
+            </div>
+        </section>
