@@ -3,6 +3,9 @@ extends layout
 block content
    
     main.content
+        <input type="hidden" id="country" value="#{country}">
+        <input type="hidden" id="category" value="#{category}">
+        <input type="hidden" id="query" value="#{query}">
         if noticias.length > 0
             .columns.is-multiline
                 each item in noticias

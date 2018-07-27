@@ -22,14 +22,22 @@ router.get("/", function(req, res, next) {
 });
 
 router.get("/feed", async function(req, res) {
-  const filter = req.query.category;
-  const urlToFetch = filter
-    ? `https://newsapi.org/v2/top-headlines?category=${filter}`
-    : "https://newsapi.org/v2/top-headlines";
+  const country = req.query.country ? req.query.country : "us";
+  const filter = req.query.category ? req.query.category : "";
+  const q = req.query.q ? req.query.q : "";
+  // const filter = req.query.category;
+
+  let urlToGet = `https://newsapi.org/v2/top-headlines?country=${country}`;
+  if (filter) {
+    urlToGet += `&category=${filter}`;
+  };
+  if (q) {
+    urlToGet += `&q=${q}`;
+  }
+  
   const news = await axios
-    .get(urlToFetch, {
+    .get(urlToGet, {
       params: {
-        country: "us",
         apiKey: process.env.NEWS_API_KEY
       }
     })
@@ -53,7 +61,10 @@ router.get("/feed", async function(req, res) {
   // Pinto en pantalla todos los que me vienen
   res.render("feed", {
     title: "NewsReader | Feed",
-    noticias: totalArticles
+    noticias: totalArticles,
+    country: country,
+    filter: filter,
+    query: q
   });
 
   // Guardo solo los que no tenía guardados antes
@@ -100,6 +111,10 @@ router.get("/favs", (req, res) => {
     isFavsPage: true
   });
 });
+
+router.patch("/update-country/:country", async function(req, res) {
+
+})
 
 function formatDate(format, date) {
   date = new Date(date);
