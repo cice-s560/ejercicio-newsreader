@@ -22,14 +22,17 @@ router.get("/", function(req, res, next) {
 });
 
 router.get("/feed", async function(req, res) {
-  const filter = req.query.category;
-  const urlToFetch = filter
-    ? `https://newsapi.org/v2/top-headlines?category=${filter}`
-    : "https://newsapi.org/v2/top-headlines";
+  // Recojo los posibles parámetros por query
+  const filterCategory = req.query.category;
+  const filterSearch = req.query.search;
+  const filterCountry = req.query.country || "us";
+  const urlToFetch = "https://newsapi.org/v2/top-headlines";
   const news = await axios
     .get(urlToFetch, {
       params: {
-        country: "us",
+        country: filterCountry,
+        category: filterCategory,
+        q: filterSearch,
         apiKey: process.env.NEWS_API_KEY
       }
     })
@@ -40,7 +43,7 @@ router.get("/feed", async function(req, res) {
     id: uuid(article.url, uuid.URL),
     rating: 0,
     fav: false,
-    category: filter
+    category: filterCategory
   }));
 
   const articlesFiltered = totalArticles.filter(item => {
@@ -53,7 +56,9 @@ router.get("/feed", async function(req, res) {
   // Pinto en pantalla todos los que me vienen
   res.render("feed", {
     title: "NewsReader | Feed",
-    noticias: totalArticles
+    noticias: totalArticles,
+    category: filterCategory,
+    country: filterCountry
   });
 
   // Guardo solo los que no tenía guardados antes

@@ -5,6 +5,16 @@ body {
   min-height: 100vh;
 }
 
+body > header {
+  background-color: #fff;
+}
+
+.search-box {
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 70%;
+}
+
 .logo-brand {
   display: inline-block;
   margin-right: 0.5rem !important;

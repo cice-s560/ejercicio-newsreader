@@ -24,6 +24,28 @@ html
                     a.navbar-item(href="/feed?category=technology") Tecnología
                     a.navbar-item(href="/feed?category=science") Ciencia
         </nav>
+
+        form#search-form.search-box(action="/feed", method="GET")
+            <div class="control has-icons-right">
+                <input id="search" name="search" class="input" type="text" placeholder="Search">
+                <span class="icon is-small is-right">
+                    <i class="fas fa-search"></i>
+                </span>
+
+                if category
+                    input#category-input(type="hidden", name="category", value=category)
+            </div>
+        
+        form#country-form.search-box(action="/feed", method="GET")
+            <div class="control">
+                <div class="select">
+                    <select id="country-selector" name="country">
+                        option(value="us", selected=country==="us") USA
+                        option(value="mx", selected=country==="mx") México
+                        option(value="ru", selected=country==="ru") USA
+                    </select>
+                </div>
+            </div>
         
         if isFavsPage
             nav.navbar
@@ -33,9 +55,13 @@ html
                     a.navbar-item(href="/favs?category=technology") Tecnología
                     a.navbar-item(href="/favs?category=science") Ciencia
 
+        
+
 
     block content
 
     footer#main-footer.content.has-text-centered
         p
             a(href="https://newsapi.org/") Fuente de noticias NewsApi
+    
+    script(src="/js/scripts.js")

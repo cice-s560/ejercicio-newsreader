@@ -2,7 +2,7 @@ extends layout
 
 block content
    
-    main.content
+    main.content(data-category=category)
         if noticias.length > 0
             .columns.is-multiline
                 each item in noticias
