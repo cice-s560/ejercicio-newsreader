@@ -6,16 +6,13 @@ block content
         form.query-filters(method="get", action="feed")
             div.query-filters
                 div.searchbar.button
-                    input(type="text", placeholder="busqueda", name="search")
-                    button(data-app="submit", type="submit", name="search")
-                        i.fas.fa-search
-            div.query-filters
+                    input(type="text", placeholder="Búsqueda", name="search")
                 div.searchbar
                     select(name="country").button
                         option(value="us") Noticias en inglés
                         option(value="mx") Noticias en español
                         option(value="ru") Noticias en ruso
-                    button(data-app="submit", type="submit", name="country").button Buscar
+                button(type="submit").button Buscar
 
     main.content.feed-main
         

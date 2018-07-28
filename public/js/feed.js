@@ -1,29 +1,36 @@
 (function() {
   // DOM
-  const inputSearch = document.querySelector("input[name=search]");
-  const btnsSubmit = document.querySelectorAll("[data-app=submit]");
-  const inputCountry = document.querySelector("select[name=country]");
   const feed = document.querySelector("[data-app=feed]");
+  const form = document.querySelector("form");
 
   // Templates
   const card = document.querySelector("[data-template=card]").innerHTML;
 
   // Binding
-  btnsSubmit.forEach(btn =>{
-    btn.addEventListener("click", function(e){
-      e.preventDefault();
-      if(!this.getAttribute("name")) return false;
-      let value;
-      switch(this.getAttribute("name")){
-        case "country":
-          value = inputCountry.value ? inputCountry.value : "";
-          break;
-        case "search":
-          value = inputSearch.value ? inputSearch.value : "";
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    let formData = new FormData(e.target);
+    let searchValue = formData.get("search") ? formData.get("search") : "";
+    let countryValue = formData.get("country") ? formData.get("country") : "us";
+    let url = new URL(window.location.href);
+    let categoryParam = url.searchParams.get("category")
+      ? `&category=${url.searchParams.get("category")}`
+      : "";
+
+    fetch(
+      `/feed?format=json&search=${searchValue}&country=${countryValue}${categoryParam}`,
+      {
+        method: "GET",
+        headers: new Headers({
+          Accept: "application/json"
+        })
       }
-      fetchResults(this.getAttribute("name"), value)
-        .then(data => renderCards(data, feed, card));
-    });
+    )
+      .then(resp => resp.json())
+      .then(data => {
+        renderCards(data, feed, card);
+        e.target.reset();
+      });
   });
 
   // Funciones
@@ -47,36 +54,5 @@
       html = html + card;
     });
     target.innerHTML = html;
-  }
-
-  function fetchResults(filter, value) {
-    return new Promise((resolve, reject)=>{
-      let urlParams = "";
-      let url = new URL(window.location.href);
-      
-      let category = url.searchParams.get("category");
-      if(category)
-        urlParams = urlParams + `&category=${category}`;
-        
-      switch (filter) {
-        case "country":
-          urlParams = urlParams + `&country=${value}`;
-          break;
-        case "search":
-          urlParams = urlParams + `&search=${value}`;
-          break;
-      }
-      fetch(`/feed?format=json${urlParams}`, {
-        method: "GET",
-        headers: new Headers({
-          Accept: "application/json"
-        })
-      })
-        .then(resp => resp.json())
-        .then(data => {
-          resolve(data);
-        })
-        .catch( err => reject(err));
-    });
   }
 })();
