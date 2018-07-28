@@ -23,9 +23,18 @@ router.get("/", function(req, res, next) {
 
 router.get("/feed", async function(req, res) {
   // Recojo los posibles parámetros por query
-  const filterCategory = req.query.category;
-  const filterSearch = req.query.search;
-  const filterCountry = req.query.country || "us";
+  const filterCategory =
+    req.query.category && req.query.category !== "null"
+      ? req.query.category
+      : undefined;
+  const filterSearch =
+    req.query.search && req.query.search !== "null"
+      ? req.query.search
+      : undefined;
+  const filterCountry =
+    req.query.country && req.query.country !== "null"
+      ? req.query.country
+      : "us";
   const urlToFetch = "https://newsapi.org/v2/top-headlines";
   const news = await axios
     .get(urlToFetch, {
@@ -52,6 +61,14 @@ router.get("/feed", async function(req, res) {
     // Si encuentro el artículo por URL, entonces es un false (no quiero duplicar)
     return !Boolean(check);
   });
+
+  // Si la petición es AJAX
+  // devuelvo datos apor AJAX y no sigo para renderizar
+  if (req.query.isajax) {
+    saveOnDB(articlesFiltered);
+
+    return res.status(200).json({ articles: totalArticles });
+  }
 
   // Pinto en pantalla todos los que me vienen
   res.render("feed", {

@@ -6,7 +6,7 @@ html
     link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel="icon", type="image/png", href="/favicon.png")
-  body
+  body(data-country=country, data-category=category)
     header
         <nav class="navbar" role="navigation" aria-label="main navigation">
             <div class="navbar-brand content custom-brand">
@@ -42,7 +42,7 @@ html
                     <select id="country-selector" name="country">
                         option(value="us", selected=country==="us") USA
                         option(value="mx", selected=country==="mx") México
-                        option(value="ru", selected=country==="ru") USA
+                        option(value="ru", selected=country==="ru") Rusia
                     </select>
                 </div>
             </div>
