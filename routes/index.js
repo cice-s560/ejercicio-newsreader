@@ -23,40 +23,19 @@ router.get("/", function(req, res, next) {
 
 router.get("/feed", async function(req, res) {
   // Establecemos los parametros de busqueda
-  let selectedCategory = "";
-  let currentCategory = "top20";
-  switch (req.query.category) {
-    case "sports":
-      selectedCategory = "sports";
-      currentCategory = "sports";
-      break;
-    case "technology":
-      selectedCategory = "technology";
-      currentCategory = "technology";
-      break;
-  }
-
-  let searchQuery = "";
-  if (req.query.search) {
-    searchQuery = req.query.search;
-  }
-
-  let selectedCountry = "us";
-  if (req.query.country) {
-    selectedCountry = req.query.country;
-  }
+  let currentCategory = req.query.category ? req.query.category : "top20";
 
   // Noticias recuperadas desde la API
   const news = await axios
     .get(`https://newsapi.org/v2/top-headlines`, {
       params: {
-        country: selectedCountry,
-        category: selectedCategory,
-        q: searchQuery,
+        country: req.query.country ? req.query.country : "us",
+        category: req.query.category ? req.query.category : "",
+        q: req.query.search ? req.query.search : "",
         apiKey: process.env.NEWS_API_KEY
       }
     })
-    .catch(e => res.status(500).send("error"));
+    .catch(e => res.status(500).send("Error en la carga de noticias"));
 
   // Articulos nuevos formateados con propiedades necesarias para app
   const a_newArticles = [];
@@ -83,8 +62,6 @@ router.get("/feed", async function(req, res) {
     }
   });
 
-  res.status(200);
-
   if (!req.query.format) {
     res.render("feed", {
       title: "NewsReader | Feed",
@@ -100,19 +77,7 @@ router.get("/feed", async function(req, res) {
 });
 
 router.get("/favourites", (req, res) => {
-  let currentCategory = false;
-  switch (req.query.category) {
-    case "sports":
-      currentCategory = "sports";
-      break;
-    case "technology":
-      currentCategory = "technology";
-      break;
-    case "top20":
-      currentCategory = "top20";
-      break;
-  }
-
+  let currentCategory = req.query.category ? req.query.category : false;
   let renderArticles = [];
 
   if (!currentCategory)
@@ -127,8 +92,6 @@ router.get("/favourites", (req, res) => {
     noticias: renderArticles,
     isFavPage: true
   });
-
-  res.status(200);
 });
 
 router.get("/detail/:id", function(req, res) {
