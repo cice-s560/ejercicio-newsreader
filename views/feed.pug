@@ -17,10 +17,10 @@ block content
                         option(value="ru") Noticias en ruso
                     button(data-app="submitCountry", type="submit").button Buscar
 
-    main(data-app="feed").content.feed-main
+    main.content.feed-main
         
         if noticias.length > 0
-            .columns.is-multiline
+            .columns.is-multiline(data-app="feed")
                 each item in noticias
                     .column.is-4-tablet.is-3-desktop
 
