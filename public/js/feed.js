@@ -1,24 +1,29 @@
 (function() {
   // DOM
   const inputSearch = document.querySelector("input[name=search]");
-  const btnSearch = document.querySelector("[data-app=submitSearch]");
+  const btnsSubmit = document.querySelectorAll("[data-app=submit]");
   const inputCountry = document.querySelector("select[name=country]");
-  const btnCountry = document.querySelector("[data-app=submitCountry]");
   const feed = document.querySelector("[data-app=feed]");
 
   // Templates
   const card = document.querySelector("[data-template=card]").innerHTML;
 
   // Binding
-  btnSearch.addEventListener("click", e => {
-    e.preventDefault();
-    if (!inputSearch.value) return console.log("Missing search value");
-    fetchResults("search", inputSearch.value);
-  });
-  btnCountry.addEventListener("click", e => {
-    e.preventDefault();
-    if (!inputCountry.value) return console.log("Missing country value");
-    fetchResults("country", inputCountry.value);
+  btnsSubmit.forEach(btn =>{
+    btn.addEventListener("click", function(e){
+      e.preventDefault();
+      if(!this.getAttribute("name")) return false;
+      let value;
+      switch(this.getAttribute("name")){
+        case "country":
+          value = inputCountry.value ? inputCountry.value : "";
+          break;
+        case "search":
+          value = inputSearch.value ? inputSearch.value : "";
+      }
+      fetchResults(this.getAttribute("name"), value)
+        .then(data => renderCards(data, feed, card));
+    });
   });
 
   // Funciones
@@ -45,25 +50,33 @@
   }
 
   function fetchResults(filter, value) {
-    let urlParams = "";
-    switch (filter) {
-      case "country":
-        urlParams = `&country=${value}`;
-        break;
-      case "search":
-        urlParams = `&search=${value}`;
-        break;
-    }
-    fetch(`/feed?format=json${urlParams}`, {
-      method: "GET",
-      headers: new Headers({
-        Accept: "application/json"
+    return new Promise((resolve, reject)=>{
+      let urlParams = "";
+      let url = new URL(window.location.href);
+      
+      let category = url.searchParams.get("category");
+      if(category)
+        urlParams = urlParams + `&category=${category}`;
+        
+      switch (filter) {
+        case "country":
+          urlParams = urlParams + `&country=${value}`;
+          break;
+        case "search":
+          urlParams = urlParams + `&search=${value}`;
+          break;
+      }
+      fetch(`/feed?format=json${urlParams}`, {
+        method: "GET",
+        headers: new Headers({
+          Accept: "application/json"
+        })
       })
-    })
-      .then(resp => resp.json())
-      .then(data => {
-        console.log(data);
-        renderCards(data, feed, card);
-      });
+        .then(resp => resp.json())
+        .then(data => {
+          resolve(data);
+        })
+        .catch( err => reject(err));
+    });
   }
 })();

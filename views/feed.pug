@@ -3,19 +3,19 @@ extends layout
 block content
    
     if isHomePage
-        div.query-filters
-            form(method="get", action="feed").query-filters
+        form.query-filters(method="get", action="feed")
+            div.query-filters
                 div.searchbar.button
                     input(type="text", placeholder="busqueda", name="search")
-                    button(data-app="submitSearch", type="submit")
+                    button(data-app="submit", type="submit", name="search")
                         i.fas.fa-search
-            form(method="get", action="feed").query-filters
+            div.query-filters
                 div.searchbar
                     select(name="country").button
                         option(value="us") Noticias en inglés
                         option(value="mx") Noticias en español
                         option(value="ru") Noticias en ruso
-                    button(data-app="submitCountry", type="submit").button Buscar
+                    button(data-app="submit", type="submit", name="country").button Buscar
 
     main.content.feed-main
         
