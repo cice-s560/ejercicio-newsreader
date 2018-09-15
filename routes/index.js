@@ -7,6 +7,7 @@ const uuid = require("uuid/v3");
 const dbPath = path.join(__dirname, "../db.json");
 // !AVISO Necesitamos un /db.json ==> { "articles": [] }
 const db = JSON.parse(fs.readFileSync(dbPath), "utf8");
+let dbClient;
 
 function saveOnDB(data) {
   const oldNews = db.articles;
@@ -18,6 +19,13 @@ function saveOnDB(data) {
 }
 
 router.get("/", function(req, res, next) {
+  dbClient.collection("prueba").find({}).toArray((err, items) => {
+    if (err) throw err;
+
+
+    console.log(items);
+  });
+
   res.render("landing", { title: "NewsReader" });
 });
 
@@ -133,4 +141,7 @@ function formatDate(format, date) {
   return format;
 }
 
-module.exports = router;
+module.exports = ({
+  router,
+  setDBClient: client => dbClient = client
+});
