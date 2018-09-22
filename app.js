@@ -5,7 +5,14 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+
+const assert = require('chalk');
+
+const MongoClient = require('mongodb').MongoClient;
+const DB_URL = 'mongodb://localhost:27017';
+
+const PORT = process.env.PORT || 3000;
 
 var indexRouter = require('./routes/index');
 
@@ -25,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 // Todas las rutas de la app en un solo router
-app.use('/', indexRouter);
+app.use('/', indexRouter.router);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -41,6 +48,19 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+app.listen(PORT, () => {
+  console.log(assert.magentaBright(`Express running at ${PORT}`));
+
+  MongoClient.connect(DB_URL, (err, client) => {
+    if (err) throw err;
+
+    console.log(assert.yellow("Mongo connected"));
+
+    ;
+    indexRouter.setDBClient(client.db("cicetest"));
+  });
 });
 
 module.exports = app;

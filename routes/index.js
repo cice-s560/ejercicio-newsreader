@@ -7,6 +7,7 @@ const uuid = require("uuid/v3");
 const dbPath = path.join(__dirname, "../db.json");
 // !AVISO Necesitamos un /db.json ==> { "articles": [] }
 const db = JSON.parse(fs.readFileSync(dbPath), "utf8");
+let dbClient;
 
 function saveOnDB(data) {
   const oldNews = db.articles;
@@ -18,26 +19,37 @@ function saveOnDB(data) {
 }
 
 router.get("/", function(req, res, next) {
+  dbClient.collection("prueba").find({}).toArray((err, items) => {
+    if (err) throw err;
+
+
+    console.log(items);
+  });
+
   res.render("landing", { title: "NewsReader" });
 });
 
 router.get("/feed", async function(req, res) {
-  const country = req.query.country ? req.query.country : "us";
-  const filter = req.query.category ? req.query.category : "";
-  const q = req.query.q ? req.query.q : "";
-  // const filter = req.query.category;
-
-  let urlToGet = `https://newsapi.org/v2/top-headlines?country=${country}`;
-  if (filter) {
-    urlToGet += `&category=${filter}`;
-  };
-  if (q) {
-    urlToGet += `&q=${q}`;
-  }
-  
+  // Recojo los posibles parámetros por query
+  const filterCategory =
+    req.query.category && req.query.category !== "null"
+      ? req.query.category
+      : undefined;
+  const filterSearch =
+    req.query.search && req.query.search !== "null"
+      ? req.query.search
+      : undefined;
+  const filterCountry =
+    req.query.country && req.query.country !== "null"
+      ? req.query.country
+      : "us";
+  const urlToFetch = "https://newsapi.org/v2/top-headlines";
   const news = await axios
-    .get(urlToGet, {
+    .get(urlToFetch, {
       params: {
+        country: filterCountry,
+        category: filterCategory,
+        q: filterSearch,
         apiKey: process.env.NEWS_API_KEY
       }
     })
@@ -48,7 +60,7 @@ router.get("/feed", async function(req, res) {
     id: uuid(article.url, uuid.URL),
     rating: 0,
     fav: false,
-    category: filter
+    category: filterCategory
   }));
 
   const articlesFiltered = totalArticles.filter(item => {
@@ -58,13 +70,20 @@ router.get("/feed", async function(req, res) {
     return !Boolean(check);
   });
 
+  // Si la petición es AJAX
+  // devuelvo datos apor AJAX y no sigo para renderizar
+  if (req.query.isajax) {
+    saveOnDB(articlesFiltered);
+
+    return res.status(200).json({ articles: totalArticles });
+  }
+
   // Pinto en pantalla todos los que me vienen
   res.render("feed", {
     title: "NewsReader | Feed",
     noticias: totalArticles,
-    country: country,
-    filter: filter,
-    query: q
+    category: filterCategory,
+    country: filterCountry
   });
 
   // Guardo solo los que no tenía guardados antes
@@ -112,10 +131,6 @@ router.get("/favs", (req, res) => {
   });
 });
 
-router.patch("/update-country/:country", async function(req, res) {
-
-})
-
 function formatDate(format, date) {
   date = new Date(date);
 
@@ -126,4 +141,7 @@ function formatDate(format, date) {
   return format;
 }
 
-module.exports = router;
+module.exports = ({
+  router,
+  setDBClient: client => dbClient = client
+});

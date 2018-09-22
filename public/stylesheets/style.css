@@ -5,6 +5,16 @@ body {
   min-height: 100vh;
 }
 
+body > header {
+  background-color: #fff;
+}
+
+.search-box {
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 70%;
+}
+
 .logo-brand {
   display: inline-block;
   margin-right: 0.5rem !important;
@@ -108,14 +118,14 @@ img.detail-image {
 /***** CSS Magic to Highlight Stars on Hover *****/
 
 .rating > input:checked ~ label, /* show gold star when clicked */
-.rating:not(:checked) > label:hover, /* hover current star */
-.rating:not(:checked) > label:hover ~ label {
+  .rating:not(:checked) > label:hover, /* hover current star */
+  .rating:not(:checked) > label:hover ~ label {
   color: #ffd700;
 } /* hover previous stars in list */
 
 .rating > input:checked + label:hover, /* hover current star when changing rating */
-.rating > input:checked ~ label:hover,
-.rating > label:hover ~ input:checked ~ label, /* lighten current selection */
-.rating > input:checked ~ label:hover ~ label {
+  .rating > input:checked ~ label:hover,
+  .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+  .rating > input:checked ~ label:hover ~ label {
   color: #ffed85;
 }

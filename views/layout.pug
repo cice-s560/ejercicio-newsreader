@@ -1,64 +1,67 @@
 doctype html
 html
-    head
-        title= title
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
-        link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css')
-        link(rel='stylesheet', href='/stylesheets/style.css')
-        link(rel="icon", type="image/png", href="/favicon.png")
-    body
-        header
-            <nav class="navbar" role="navigation" aria-label="main navigation">
-                <div class="navbar-brand content custom-brand">
-                    a(href="/")
-                        figure.image.is-32x32.logo-brand
-                            img(src="/images/logo.png")
-                        h1 NewsReader
+  head
+    title= title
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel="icon", type="image/png", href="/favicon.png")
+  body(data-country=country, data-category=category)
+    header
+        <nav class="navbar" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand content custom-brand">
+                a(href="/")
+                    figure.image.is-32x32.logo-brand
+                        img(src="/images/logo.png")
+                    h1 NewsReader
+            </div>
+            .navbar-menu.content
+                .navbar-start.menu-primary
+                    a.navbar-item(href="/favs") Favoritos
+                .navbar-end
+                    a.navbar-item(href="/feed") Todo
+                    a.navbar-item(href="/feed?category=sports") Deportes
+                    a.navbar-item(href="/feed?category=technology") Tecnología
+                    a.navbar-item(href="/feed?category=science") Ciencia
+        </nav>
+
+        form#search-form.search-box(action="/feed", method="GET")
+            <div class="control has-icons-right">
+                <input id="search" name="search" class="input" type="text" placeholder="Search">
+                <span class="icon is-small is-right">
+                    <i class="fas fa-search"></i>
+                </span>
+
+                if category
+                    input#category-input(type="hidden", name="category", value=category)
+            </div>
+        
+        form#country-form.search-box(action="/feed", method="GET")
+            <div class="control">
+                <div class="select">
+                    <select id="country-selector" name="country">
+                        option(value="us", selected=country==="us") USA
+                        option(value="mx", selected=country==="mx") México
+                        option(value="ru", selected=country==="ru") Rusia
+                    </select>
                 </div>
-                .navbar-menu.content
-                    .navbar-start.menu-primary
-                        a.navbar-item(href="/favs") Favoritos
-                    .navbar-end
-                        if country
-                            a.navbar-item(href=`/feed?country=${country}`) Todo
-                            a.navbar-item(href=`/feed?country=${country}&category=sports`) Deportes
-                            a.navbar-item(href=`/feed?country=${country}&category=technology`) Tecnología
-                            a.navbar-item(href=`/feed?country=${country}&category=science`) Ciencia
-                        else
-                            a.navbar-item(href=`/feed`) Todo
-                            a.navbar-item(href=`/feed?category=sports`) Deportes
-                            a.navbar-item(href=`/feed?category=technology`) Tecnología
-                            a.navbar-item(href="/feed?category=science") Ciencia
-            </nav>
-            
-            if isFavsPage
-                nav.navbar
-                    .navbar-menu.content
-                        span.navbar-item.has-text-weight-bold Categorías de Favoritos
-                        a.navbar-item(href="/favs?category=sports") Deportes
-                        a.navbar-item(href="/favs?category=technology") Tecnología
-                        a.navbar-item(href="/favs?category=science") Ciencia
-            
+            </div>
+        
+        if isFavsPage
             nav.navbar
                 .navbar-menu.content
-                    .navbar-end
-                        <select class="select" id="select">
-                            <option value="us"> English (US)</option>
-                            <option value="fr"> French (FR)</option>
-                            <option value="mx"> Spanish (MX)</option>
-                        </select>
-                        <input class="search" id="search" type="search"/>
+                    span.navbar-item.has-text-weight-bold Categorías de Favoritos
+                    a.navbar-item(href="/favs?category=sports") Deportes
+                    a.navbar-item(href="/favs?category=technology") Tecnología
+                    a.navbar-item(href="/favs?category=science") Ciencia
 
-
-        block content
-
-        footer#main-footer.content.has-text-centered
-            p
-                a(href="https://newsapi.org/") Fuente de noticias NewsApi
-
-
-        script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
-
-        block scripts
         
-        script(src="/js/scripts.js")
+
+
+    block content
+
+    footer#main-footer.content.has-text-centered
+        p
+            a(href="https://newsapi.org/") Fuente de noticias NewsApi
+    
+    script(src="/js/scripts.js")
