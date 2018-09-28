@@ -1,30 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
 const uuid = require("uuid/v3");
-const dbPath = path.join(__dirname, "../db.json");
-// !AVISO Necesitamos un /db.json ==> { "articles": [] }
-const db = JSON.parse(fs.readFileSync(dbPath), "utf8");
 let dbClient;
 
 function saveOnDB(data) {
-  const oldNews = db.articles;
-  const totalNews = [...oldNews, ...data]; // db.articles.concat(data)
-  const dataToWrite = { articles: totalNews };
-  const dataString = JSON.stringify(dataToWrite);
-
-  fs.writeFileSync(dbPath, dataString, "utf8");
+  dbClient.insertMany(data, (err, res) => {
+    if (err) throw err;
+    console.log(res);
+  });
 }
 
-router.get("/", function(req, res, next) {
-  dbClient.collection("prueba").find({}).toArray((err, items) => {
-    if (err) throw err;
-
-
-    console.log(items);
-  });
+router.get("/", async function(req, res, next) {
+  // await dbClient
+  //   .collection("news")
+  //   .find({})
+  //   .toArray((err, items) => {
+  //     if (err) throw err;
+  //     console.log(items);
+  //   });
 
   res.render("landing", { title: "NewsReader" });
 });
@@ -44,6 +38,7 @@ router.get("/feed", async function(req, res) {
       ? req.query.country
       : "us";
   const urlToFetch = "https://newsapi.org/v2/top-headlines";
+
   const news = await axios
     .get(urlToFetch, {
       params: {
@@ -92,56 +87,51 @@ router.get("/feed", async function(req, res) {
 
 router.get("/detail/:id", async function(req, res) {
   const param = req.params.id;
-  const article = db.articles.find(item => item.id === param);
-
-  res.render("detail", { title: "NewsReader | Detail", article });
+  const article = await dbClient.findOne({ id: param }).catch(err => {
+    console.log(err);
+  });
+  res.render("detail", { title: "NewsReader | Detail", article: article });
 });
 
 router.patch("/update-rating/:id", async function(req, res) {
-  db.articles.forEach(article => {
-    if (article.id === req.params.id) article.rating = req.body.rating;
-  });
-  fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
-
+  const param = req.params.id;
+  await dbClient.findOneAndUpdate(
+    { id: param },
+    { $set: { rating: req.body.rating } }
+  );
   return res
     .status(200)
     .json({ resp: "OK", dato: "algo", data: req.body.rating });
 });
 
 router.patch("/update-fav/:id", async function(req, res) {
-  const article = db.articles.find(item => item.id === req.params.id);
-  article.fav = !Boolean(article.fav);
-  fs.writeFileSync(dbPath, JSON.stringify(db), "utf8");
-
+  const param = req.params.id;
+  const article = await dbClient.findOne({ id: param }).catch(err => {
+    console.log(err);
+  });
+  const toggleFav = !Boolean(article.fav);
+  await dbClient.findOneAndUpdate(
+    { id: param },
+    { $set: { fav: toggleFav } },
+    (err, doc) => {
+      if (err) throw err;
+      console.log("Updated to Fav = " + doc);
+    }
+  );
   return res.status(200).send();
 });
 
-router.get("/favs", (req, res) => {
-  const favArticles = db.articles.filter(item => item.fav === true);
-  const filter = req.query.category;
-  const favArticlesFiltered = favArticles.filter(
-    item => item.category === filter
-  );
-  const articlesToShow = filter ? favArticlesFiltered : favArticles;
+router.get("/favs", async function(req, res) {
+  const favs = await dbClient.find({ fav: true });
 
   res.render("feed", {
     title: "NewsReader | Favoritos",
-    noticias: articlesToShow,
+    noticias: favs,
     isFavsPage: true
   });
 });
 
-function formatDate(format, date) {
-  date = new Date(date);
-
-  format = format.split("Y").join(date.getFullYear());
-  format = format.split("m").join(("0" + (date.getMonth() + 1)).slice(-2));
-  format = format.split("d").join(("0" + date.getDate()).slice(-2));
-
-  return format;
-}
-
-module.exports = ({
+module.exports = {
   router,
-  setDBClient: client => dbClient = client
-});
+  setDBClient: client => (dbClient = client.collection("news"))
+};
